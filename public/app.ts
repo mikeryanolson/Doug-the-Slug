@@ -9,7 +9,7 @@ game: Phaser.Game;
 
 snowmen: Phaser.Group;
 
-snowman: Phaser.Sprite;
+// snowman: Phaser.Sprite;
 
 map: Phaser.Tilemap;
 
@@ -23,6 +23,11 @@ cursors: Phaser.CursorKeys;
 
 score: number = 0;
 
+nextTree: number = 0;
+
+nextSnowman: number = 0;
+
+
 
 
 W: Phaser.Key;
@@ -32,7 +37,15 @@ D: Phaser.Key;
   
 
     constructor() {
-        this.game = new Phaser.Game(1088, 640, Phaser.AUTO, "content", { preload: this.preload, create: this.create, update:this.update, treefall:this.treefall });
+        this.game = new Phaser.Game(1088, 640, Phaser.AUTO, "content", 
+        {   preload: this.preload, 
+            create: this.create, 
+            update:this.update, 
+            treefall:this.treefall, 
+            nextTree: this.nextTree,
+            snowMaker: this.snowMaker, 
+            nextSnowman: this.nextSnowman,
+            render: this.render});
   }
 
     preload() {
@@ -50,40 +63,53 @@ D: Phaser.Key;
         this.game.load.tilemap("snowlevel","/dougsnow.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("tiles", "/images/dougsnow.png");
 
-        this.score = 0; 
-
 
     }
 
     render() {
         // This renders debug information about physics bodies
-        this.game.debug.body(this.doug);
+        // this.game.debug.bodyInfo(this.doug, 32, 32);
+        // this.game.debug.body(this.doug);
     }
 
-    treefall() {
-                this.trees = this.game.add.group();
-        var delay = 0;
+ treefall() {
 
-            var lefttree = this.game.add.sprite (-275,-400,"tree4");
-            this.game.physics.enable(lefttree, Phaser.Physics.ARCADE);
-            lefttree.body.collideWorldBounds = false;
-            lefttree.body.gravity.y = 6; 
+    //  this.trees = this.game.add.group();
+    //     if (this.game.time.now > this.nextTree) {
+    //         var lefttree = this.trees.create(-275, -800,"tree4");
+    //         this.game.physics.enable(lefttree, Phaser.Physics.ARCADE);
+    //         lefttree.body.collideWorldBounds = false;
+    //     }
+    //     for (var i=0; i < this.trees.children.length; i++){
+    //         this.trees.children[i].y += 50;
+    //     }
+                var lefttree = this.game.add.sprite (-275, -800,"tree4");
+                this.game.physics.enable(lefttree, Phaser.Physics.ARCADE);
+                lefttree.body.collideWorldBounds = false;
+                lefttree.body.gravity.y = 350; 
 
 
-            var righttree = this.game.add.sprite (760,-400,"tree4");
-            this.game.physics.enable(righttree, Phaser.Physics.ARCADE);
-            righttree.body.collideWorldBounds = false;
-            righttree.body.gravity.y = 600;
-            // righttree.scale.setTo(2,2);
-            // lefttree.scale.setTo(2,2);
-            
-             this.game.add.tween(righttree).to({ y: 600 }, 20000, Phaser.Easing.Linear.None, false);
-             
-             
-             this.game.add.tween(lefttree).to({ y: 600 }, null, Phaser.Easing.Cubic.In, true, delay, 5, false);
+                var righttree = this.game.add.sprite (760, -800,"tree4");
+                this.game.physics.enable(righttree, Phaser.Physics.ARCADE);
+                righttree.body.collideWorldBounds = false;
+                righttree.body.gravity.y = 375; 
+ }  
 
-             delay += 5000;
-     }
+snowMaker() {
+    //CREATE SNOWMEN
+        this.snowmen = this.game.add.group();
+        this.snowmen.enableBody = true;
+
+        for (var i = 0; i < 5; i++){
+                let snowman = this.snowmen.create(this.game.world.randomX, -75,"snowman");
+                // this.game.physics.enable(snowman, Phaser.Physics.ARCADE);
+                snowman.body.collideWorldBounds = false;
+                snowman.body.gravity.y = 200; 
+
+        this.game.physics.arcade.collide(this.doug, this.snowmen, (doug, snowmen) => { doug.kill() });
+
+        }
+}
 
     create() {
         this.game.physics.startSystem(Phaser.Physics.ARCADE); 
@@ -93,8 +119,6 @@ D: Phaser.Key;
 
         this.map.createLayer("Tile Layer 1").resizeWorld();
 
-
-
 //CREATE DOUG
         this.doug = this.game.add.sprite(this.game.width / 2, 0, "doug");
         this.doug.scale.setTo(2.5,2.5);
@@ -102,15 +126,7 @@ D: Phaser.Key;
         this.doug.body.collideWorldBounds = true;
         this.doug.body.gravity.y = 4000; 
         this.doug.body.bounce.y = 0.2;
-//CREATE SNOWMEN
-        this.snowmen = this.game.add.group();
-
-        for (var i = 0; i < 10; i++){
-                var snowman = this.snowmen.create(this.game.world.randomX, -75,"snowman");
-                this.game.physics.enable(snowman, Phaser.Physics.ARCADE);
-                snowman.body.collideWorldBounds = false;
-                snowman.body.gravity.y = 200; 
-        }
+        this.doug.body.setSize(15, 25, 9, 8);
 
         
         this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -120,44 +136,23 @@ D: Phaser.Key;
         this.S = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.D = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
         
-
-        // this.trees = this.game.add.group();
-        // var delay = 0;
-        // for(var i = 0; i < 1; i++) {
-        //     var lefttree = this.game.add.sprite (-275,-400,"tree4");
-        //     this.game.physics.enable(lefttree, Phaser.Physics.ARCADE);
-        //     lefttree.body.collideWorldBounds = false;
-        //     lefttree.body.gravity.y = 6; 
-
-
-        //     var righttree = this.game.add.sprite (760,-400,"tree4");
-        //     this.game.physics.enable(righttree, Phaser.Physics.ARCADE);
-        //     righttree.body.collideWorldBounds = false;
-        //     righttree.body.gravity.y = 6;
-        //     // righttree.scale.setTo(2,2);
-        //     // lefttree.scale.setTo(2,2);
-            
-        //      this.game.add.tween(righttree).to({ y: 600 }, null, Phaser.Easing.Cubic.In, true, delay, 500, false);
-             
-        //      this.game.add.tween(lefttree).to({ y: 600 }, null, Phaser.Easing.Cubic.In, true, delay, 500, false);
-
-        //      delay += 5000;
-        // }
-
     }   
-
-
-
 
     update() {
         this.game.input.update();
 
-        this.treefall();
+        if (this.game.time.now > this.nextTree) {
+            this.treefall();
+            this.nextTree = this.game.time.now + 500;
+        }
 
-        this.map.tileHeight +=100;
+        if (this.game.time.now > this.nextSnowman) {
+            this.snowMaker();
+            this.nextSnowman = this.game.time.now + 400;
+        }
 
+        this.game.physics.arcade.collide(this.doug, this.snowmen, (doug: any, snowmen: any) => { doug.kill() });
 
-        this.game.physics.arcade.overlap (this.doug, this.snowmen, doom, null, this);
 
         if (this.cursors.right.isDown)
             (this.doug.position.x += 15);          
@@ -165,24 +160,15 @@ D: Phaser.Key;
         if (this.cursors.left.isDown)
             (this.doug.position.x -= 15);  
 
-        if (this.cursors.up.isDown && this.doug.position.isZero)
-            (this.doug.position.y -= 15);            
-
          if (this.D.isDown)
             (this.doug.position.x += 15);          
        
         if (this.A.isDown)
             (this.doug.position.x -= 15); 
-
-        if (this.W.isDown && this.doug.body.touching.down)
-            (this.doug.position.y -= 15);       
-
-        
+       
     }
 }
-    function doom() {
-        this.doug.kill();
-    }
+
 
 window.onload = () => {
 
