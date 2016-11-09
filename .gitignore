@@ -1,0 +1,6 @@
+data
+node_modules
+.DS_Store
+userStories.txt
+.vscode
+draft.txt
