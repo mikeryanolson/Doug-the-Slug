@@ -18,7 +18,8 @@ app.use(function(req, res, next) {
 
 
 app.get('/',(req,res)=>{
-    res.sendFile(__dirname + "/index.html");
+	console.log("test");
+    res.sendFile(__dirname + "/public/index.html");
 });
 
 
