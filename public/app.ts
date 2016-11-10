@@ -29,6 +29,8 @@ nextTree: number = 0;
 
 nextSnowman: number = 0;
 
+nextScore: number = 0;
+
 snowField: Phaser.TileSprite;
 
 emitter: any;
@@ -51,6 +53,7 @@ D: Phaser.Key;
             snowMaker: this.snowMaker, 
             nextSnowman: this.nextSnowman,
             collisionHandler: this.collisionHandler,
+            scoreBoard: this.scoreBoard,
             render: this.render});
   }
 
@@ -77,7 +80,7 @@ D: Phaser.Key;
         // this.game.debug.body(this.doug);
     }
 
- treefall() {
+    treefall() {
 
     //  this.trees = this.game.add.group();
     //     if (this.game.time.now > this.nextTree) {
@@ -98,28 +101,35 @@ D: Phaser.Key;
                 this.game.physics.enable(righttree, Phaser.Physics.ARCADE);
                 righttree.body.collideWorldBounds = false;
                 righttree.body.gravity.y = 375; 
- }  
+    }  
 
-snowMaker() {
-    //CREATE SNOWMEN
+    snowMaker() {
+        //CREATE SNOWMEN
 
-        for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 4; i++) {
 
-                this.snowman = this.snowmen.create(this.game.world.randomX, -75,"snowman");
-                this.game.physics.enable(this.snowman, Phaser.Physics.ARCADE);
-                this.snowman.body.collideWorldBounds = false;
-                this.snowman.body.gravity.y = 200; 
-                this.snowman.body.immovable = true;
-                this.snowman.body.setSize(20, 25, 10, 8);
-        }
-}
+                    this.snowman = this.snowmen.create(this.game.world.randomX, -75,"snowman");
+                    this.game.physics.enable(this.snowman, Phaser.Physics.ARCADE);
+                    this.snowman.body.collideWorldBounds = false;
+                    this.snowman.body.gravity.y = 200; 
+                    this.snowman.body.immovable = true;
+                    this.snowman.body.setSize(20, 25, 10, 8);
+            }
+    }
 
     collisionHandler() {
         console.log("gotcha!");
         this.emitter.x = this.doug.x+50;
         this.emitter.y = this.doug.y;     
-        this.emitter.start(true, 10000, null, 100);   
+        this.emitter.start(true, 10000, null, 60);   
         this.doug.kill();
+    }
+
+    scoreBoard() {
+        console.log("scoreboard");
+        var text = "test";
+        var style = { font: "65px Courier", fill: "#76EE00", align: "left"};
+        this.game.add.text (0,0, text, style);
     }
 
 
@@ -171,8 +181,13 @@ snowMaker() {
             this.snowMaker();
             this.nextSnowman = this.game.time.now + 400;
         }
-        
 
+        if (this.game.time.now > this.score) {
+            console.log("it's getting here at least");
+            this.scoreBoard();
+            this.score = this.game.time.now + 50;
+        }
+        
         this.game.physics.arcade.overlap(this.doug, this.snowmen, this.collisionHandler, null, this);
 
 

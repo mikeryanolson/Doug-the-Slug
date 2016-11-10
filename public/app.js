@@ -6,6 +6,7 @@ var DougTheSlug = (function () {
         this.score = 0;
         this.nextTree = 0;
         this.nextSnowman = 0;
+        this.nextScore = 0;
         this.game = new Phaser.Game(1088, 640, Phaser.AUTO, "content", { preload: this.preload,
             create: this.create,
             update: this.update,
@@ -14,6 +15,7 @@ var DougTheSlug = (function () {
             snowMaker: this.snowMaker,
             nextSnowman: this.nextSnowman,
             collisionHandler: this.collisionHandler,
+            scoreBoard: this.scoreBoard,
             render: this.render });
     }
     DougTheSlug.prototype.preload = function () {
@@ -69,8 +71,14 @@ var DougTheSlug = (function () {
         console.log("gotcha!");
         this.emitter.x = this.doug.x + 50;
         this.emitter.y = this.doug.y;
-        this.emitter.start(true, 10000, null, 100);
+        this.emitter.start(true, 10000, null, 60);
         this.doug.kill();
+    };
+    DougTheSlug.prototype.scoreBoard = function () {
+        console.log("scoreboard");
+        var text = "test";
+        var style = { font: "65px Courier", fill: "#76EE00", align: "left" };
+        this.game.add.text(0, 0, text, style);
     };
     DougTheSlug.prototype.create = function () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -107,6 +115,11 @@ var DougTheSlug = (function () {
         if (this.game.time.now > this.nextSnowman) {
             this.snowMaker();
             this.nextSnowman = this.game.time.now + 400;
+        }
+        if (this.game.time.now > this.score) {
+            console.log("it's getting here at least");
+            this.scoreBoard();
+            this.score = this.game.time.now + 50;
         }
         this.game.physics.arcade.overlap(this.doug, this.snowmen, this.collisionHandler, null, this);
         if (this.cursors.right.isDown)
