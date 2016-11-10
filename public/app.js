@@ -13,6 +13,7 @@ var DougTheSlug = (function () {
             nextTree: this.nextTree,
             snowMaker: this.snowMaker,
             nextSnowman: this.nextSnowman,
+            collisionHandler: this.collisionHandler,
             render: this.render });
     }
     DougTheSlug.prototype.preload = function () {
@@ -57,13 +58,16 @@ var DougTheSlug = (function () {
         //CREATE SNOWMEN
         this.snowmen = this.game.add.group();
         this.snowmen.enableBody = true;
+        this.snowmen.physicsBodyType = Phaser.Physics.ARCADE;
         for (var i = 0; i < 5; i++) {
             var snowman = this.snowmen.create(this.game.world.randomX, -75, "snowman");
-            // this.game.physics.enable(snowman, Phaser.Physics.ARCADE);
+            this.game.physics.enable(snowman, Phaser.Physics.ARCADE);
             snowman.body.collideWorldBounds = false;
             snowman.body.gravity.y = 200;
-            this.game.physics.arcade.collide(this.doug, this.snowmen, function (doug, snowmen) { doug.kill(); });
         }
+    };
+    DougTheSlug.prototype.collisionHandler = function (doug, snowmen) {
+        this.doug.kill();
     };
     DougTheSlug.prototype.create = function () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -71,13 +75,26 @@ var DougTheSlug = (function () {
         this.map.addTilesetImage("snowtile", "tiles");
         this.map.createLayer("Tile Layer 1").resizeWorld();
         //CREATE DOUG
-        this.doug = this.game.add.sprite(this.game.width / 2, 0, "doug");
-        this.doug.scale.setTo(2.5, 2.5);
-        this.game.physics.enable(this.doug, Phaser.Physics.ARCADE);
-        this.doug.body.collideWorldBounds = true;
-        this.doug.body.gravity.y = 4000;
-        this.doug.body.bounce.y = 0.2;
-        this.doug.body.setSize(15, 25, 9, 8);
+        //as group
+        this.player = this.game.add.group();
+        this.player.enableBody = true;
+        this.player.physicsBodyType = Phaser.Physics.ARCADE;
+        var doug = this.player.create(this.game.width / 2, 0, "doug");
+        doug.name = "doug";
+        doug.scale.setTo(2.5, 2.5);
+        this.game.physics.enable(doug, Phaser.Physics.ARCADE);
+        doug.body.collideWorldBounds = true;
+        doug.body.gravity.y = 4000;
+        doug.body.bounce.y = 0.2;
+        doug.body.setSize(15, 25, 9, 8);
+        //as sprite
+        // this.doug = this.game.add.sprite(this.game.width / 2, 0, "doug");
+        // this.doug.scale.setTo(2.5,2.5);
+        // this.game.physics.enable(this.doug, Phaser.Physics.ARCADE);
+        // this.doug.body.collideWorldBounds = true;
+        // this.doug.body.gravity.y = 4000; 
+        // this.doug.body.bounce.y = 0.2;
+        // this.doug.body.setSize(15, 25, 9, 8);
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.W = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
         this.A = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
@@ -94,15 +111,23 @@ var DougTheSlug = (function () {
             this.snowMaker();
             this.nextSnowman = this.game.time.now + 400;
         }
-        this.game.physics.arcade.collide(this.doug, this.snowmen, function (doug, snowmen) { doug.kill(); });
+        // this.game.physics.arcade.overlap(this.doug, this.snowmen, (doug: any, snowman: any) => { doug.kill() });
+        this.game.physics.arcade.overlap(this.player, this.snowmen, this.collisionHandler, null, this.game);
+        //     if (this.game.physics.arcade.collide(this.doug, this.snowmen))
+        // {
+        //     this.doug.kill();
+        // }
+        // function processHandler () {
+        //     return true;
+        // }
         if (this.cursors.right.isDown)
-            (this.doug.position.x += 15);
+            (this.player.position.x += 15);
         if (this.cursors.left.isDown)
-            (this.doug.position.x -= 15);
+            (this.player.position.x -= 15);
         if (this.D.isDown)
-            (this.doug.position.x += 15);
+            (this.player.position.x += 15);
         if (this.A.isDown)
-            (this.doug.position.x -= 15);
+            (this.player.position.x -= 15);
     };
     return DougTheSlug;
 }());
