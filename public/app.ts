@@ -29,6 +29,11 @@ nextTree: number = 0;
 
 nextSnowman: number = 0;
 
+snowField: Phaser.TileSprite;
+
+emitter: any;
+
+
 
 W: Phaser.Key;
 A: Phaser.Key;
@@ -53,15 +58,15 @@ D: Phaser.Key;
         this.game.load.image("doug", "/images/doug.png");
         this.game.load.image("snowman", "/images/snowman.png");
         this.game.load.image("tree", "/images/tree.png");
-        this.game.load.image("dougsnowtmx", "/images/dougsnow.png");
         this.game.load.image("tree1", "/images/nature-tree1.png");
         this.game.load.image("tree2", "/images/nature-tree2.png");
         this.game.load.image("tree3", "/images/nature-tree3.png");
         this.game.load.image("tree4", "/images/nature-tree4.png");
         this.game.load.image("tree5", "/images/nature-tree5.png");
-        this.game.load.image("tree6", "/images/nature-tree6.png");        
-        this.game.load.tilemap("snowlevel","/dougsnow.json", null, Phaser.Tilemap.TILED_JSON);
-        this.game.load.image("tiles", "/images/dougsnow.png");
+        this.game.load.image("tree6", "/images/nature-tree6.png");         
+        this.game.load.image("snow3", "/images/realsnow3.png"); 
+        this.game.load.image("snow", "/images/snow.png");    
+        this.game.load.image("gem", "/images/greenGem.png");                       
 
 
     }
@@ -105,11 +110,15 @@ snowMaker() {
                 this.snowman.body.collideWorldBounds = false;
                 this.snowman.body.gravity.y = 200; 
                 this.snowman.body.immovable = true;
+                this.snowman.body.setSize(20, 25, 10, 8);
         }
 }
 
     collisionHandler() {
         console.log("gotcha!");
+        this.emitter.x = this.doug.x+50;
+        this.emitter.y = this.doug.y;     
+        this.emitter.start(true, 10000, null, 100);   
         this.doug.kill();
     }
 
@@ -117,11 +126,8 @@ snowMaker() {
     create() {
         this.game.physics.startSystem(Phaser.Physics.ARCADE); 
 
-        this.map = this.game.add.tilemap("snowlevel", 64, 64, 12, 12);
-        this.map.addTilesetImage("snowtile", "tiles");
-
-        this.map.createLayer("Tile Layer 1").resizeWorld();
-
+        this.snowField = this.game.add.tileSprite(0,0,1088, 640, "snow");
+//snowmen group
         this.snowmen = this.game.add.group();
         this.snowmen.enableBody = true;
         this.snowmen.physicsBodyType = Phaser.Physics.ARCADE;
@@ -138,18 +144,23 @@ snowMaker() {
         this.doug.body.bounce.y = 0.2;
         this.doug.body.setSize(15, 25, 9, 8);
 
-        
-        this.cursors = this.game.input.keyboard.createCursorKeys();
+//emitter
+        this.emitter = this.game.add.emitter(0,0,100);
+        this.emitter.makeParticles("gem");
+        this.emitter.gravity = 50;
 
-        this.W = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
+//cursors
+        this.cursors = this.game.input.keyboard.createCursorKeys();
         this.A = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
         this.S = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
-        this.D = this.game.input.keyboard.addKey(Phaser.Keyboard.D);
+
         
     }   
 
     update() {
         this.game.input.update();
+
+        this.snowField.tilePosition.y +=12;
 
         if (this.game.time.now > this.nextTree) {
             this.treefall();
@@ -171,13 +182,6 @@ snowMaker() {
        
         if (this.cursors.left.isDown)
             (this.doug.position.x -= 15);  
-
-         if (this.D.isDown)
-            (this.player.position.x += 15);          
-       
-        if (this.A.isDown)
-            (this.player.position.x -= 15); 
-       
     }
 
 }
