@@ -9,13 +9,13 @@ game: Phaser.Game;
 
 snowmen: Phaser.Group;
 
-// snowman: Phaser.Sprite;
-
 map: Phaser.Tilemap;
 
 player: Phaser.Group;
 
 doug: Phaser.Sprite;
+
+snowman: Phaser.Sprite;
 
 trees: Phaser.Group;
 
@@ -28,9 +28,6 @@ score: number = 0;
 nextTree: number = 0;
 
 nextSnowman: number = 0;
-
-
-
 
 
 W: Phaser.Key;
@@ -63,7 +60,6 @@ D: Phaser.Key;
         this.game.load.image("tree4", "/images/nature-tree4.png");
         this.game.load.image("tree5", "/images/nature-tree5.png");
         this.game.load.image("tree6", "/images/nature-tree6.png");        
-        
         this.game.load.tilemap("snowlevel","/dougsnow.json", null, Phaser.Tilemap.TILED_JSON);
         this.game.load.image("tiles", "/images/dougsnow.png");
 
@@ -101,21 +97,22 @@ D: Phaser.Key;
 
 snowMaker() {
     //CREATE SNOWMEN
-        this.snowmen = this.game.add.group();
-        this.snowmen.enableBody = true;
-        this.snowmen.physicsBodyType = Phaser.Physics.ARCADE;
 
-        for (var i = 0; i < 5; i++){
-                var snowman = this.snowmen.create(this.game.world.randomX, -75,"snowman");
-                this.game.physics.enable(snowman, Phaser.Physics.ARCADE);
-                snowman.body.collideWorldBounds = false;
-                snowman.body.gravity.y = 200; 
+        for (let i = 0; i < 4; i++) {
+
+                this.snowman = this.snowmen.create(this.game.world.randomX, -75,"snowman");
+                this.game.physics.enable(this.snowman, Phaser.Physics.ARCADE);
+                this.snowman.body.collideWorldBounds = false;
+                this.snowman.body.gravity.y = 200; 
+                this.snowman.body.immovable = true;
         }
 }
 
-collisionHandler(doug, snowmen) {
-    this.doug.kill();
-}
+    collisionHandler() {
+        console.log("gotcha!");
+        this.doug.kill();
+    }
+
 
     create() {
         this.game.physics.startSystem(Phaser.Physics.ARCADE); 
@@ -125,28 +122,21 @@ collisionHandler(doug, snowmen) {
 
         this.map.createLayer("Tile Layer 1").resizeWorld();
 
+        this.snowmen = this.game.add.group();
+        this.snowmen.enableBody = true;
+        this.snowmen.physicsBodyType = Phaser.Physics.ARCADE;
+
+
 //CREATE DOUG
-//as group
-    this.player = this.game.add.group();
-    this.player.enableBody = true;
-    this.player.physicsBodyType = Phaser.Physics.ARCADE;
-        var doug = this.player.create(this.game.width / 2, 0, "doug");
-        doug.name = "doug";
-        doug.scale.setTo(2.5,2.5);
-        this.game.physics.enable(doug, Phaser.Physics.ARCADE);
-        doug.body.collideWorldBounds = true;
-        doug.body.gravity.y = 4000; 
-        doug.body.bounce.y = 0.2;
-        doug.body.setSize(15, 25, 9, 8);
 
 //as sprite
-        // this.doug = this.game.add.sprite(this.game.width / 2, 0, "doug");
-        // this.doug.scale.setTo(2.5,2.5);
-        // this.game.physics.enable(this.doug, Phaser.Physics.ARCADE);
-        // this.doug.body.collideWorldBounds = true;
-        // this.doug.body.gravity.y = 4000; 
-        // this.doug.body.bounce.y = 0.2;
-        // this.doug.body.setSize(15, 25, 9, 8);
+        this.doug = this.game.add.sprite(this.game.width / 2, 0, "doug");
+        this.doug.scale.setTo(2.5,2.5);
+        this.game.physics.enable(this.doug, Phaser.Physics.ARCADE);
+        this.doug.body.collideWorldBounds = true;
+        this.doug.body.gravity.y = 4000; 
+        this.doug.body.bounce.y = 0.2;
+        this.doug.body.setSize(15, 25, 9, 8);
 
         
         this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -171,25 +161,16 @@ collisionHandler(doug, snowmen) {
             this.nextSnowman = this.game.time.now + 400;
         }
         
-        // this.game.physics.arcade.overlap(this.doug, this.snowmen, (doug: any, snowman: any) => { doug.kill() });
 
-        this.game.physics.arcade.overlap(this.player, this.snowmen, this.collisionHandler, null, this.game);
+        this.game.physics.arcade.overlap(this.doug, this.snowmen, this.collisionHandler, null, this);
 
-    //     if (this.game.physics.arcade.collide(this.doug, this.snowmen))
-    // {
-    //     this.doug.kill();
-    // }
-
-    // function processHandler () {
-    //     return true;
-    // }
 
 
         if (this.cursors.right.isDown)
-            (this.player.position.x += 15);          
+            (this.doug.position.x += 15);          
        
         if (this.cursors.left.isDown)
-            (this.player.position.x -= 15);  
+            (this.doug.position.x -= 15);  
 
          if (this.D.isDown)
             (this.player.position.x += 15);          
@@ -198,7 +179,9 @@ collisionHandler(doug, snowmen) {
             (this.player.position.x -= 15); 
        
     }
+
 }
+
 
 
 window.onload = () => {
