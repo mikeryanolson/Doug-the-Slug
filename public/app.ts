@@ -45,6 +45,10 @@ startText: Phaser.Text;
 
 startText2: Phaser.Text;
 
+endText: Phaser.Text;
+
+endText2: Phaser.Text;
+
 
 
 W: Phaser.Key;
@@ -61,6 +65,8 @@ D: Phaser.Key;
             startScreen: this.startScreen,
             startText: this.startText,
             startText2: this.startText,
+            endText: this.endText,
+            endText2: this.endText2,
             treefall:this.treefall, 
             nextTree: this.nextTree,
             snowMaker: this.snowMaker, 
@@ -83,7 +89,7 @@ D: Phaser.Key;
     preload() {
         this.game.load.script('webfont', 'https://fonts.googleapis.com/css?family=VT323');
         this.game.load.image("doug", "/images/doug.png");
-        this.game.load.image("snowman", "/images/snowman.png");
+        this.game.load.image("ast", "/images/a.png");
         this.game.load.image("tree4", "/images/nature-tree4.png");        
         this.game.load.image("snow", "/images/snow3.png");              
         this.game.load.image("gem", "/images/greenGem.png");                       
@@ -102,7 +108,6 @@ D: Phaser.Key;
     }
 
     startScreen() {
-    
              this.game.world.remove(this.startText); 
              this.game.world.remove(this.startText2);                                    
     }
@@ -128,7 +133,7 @@ D: Phaser.Key;
 
             for (let i = 0; i < 4; i++) {
 
-                    this.snowman = this.snowmen.create(this.game.world.randomX, -75,"snowman");
+                    this.snowman = this.snowmen.create(this.game.world.randomX, -75,"ast");
                     this.game.physics.enable(this.snowman, Phaser.Physics.ARCADE);
                     this.snowman.body.collideWorldBounds = false;
                     this.snowman.body.gravity.y = 200; 
@@ -154,6 +159,9 @@ D: Phaser.Key;
         this.emitter.start(true, 10000, null, 60);   
         this.doug.kill();
         this.snowmen.remove(snowman);
+        this.endText = this.game.add.text(0, this.game.height / 2 - 150, "DOUG DIED", {fontSize: '240px', fill: "#00FF00", font: "VT323", align: "center" })            
+        this.endText2 = this.game.add.text(0, this.game.height - 100 , "HIT REFRESH", {fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" })            
+
 
     }
 
