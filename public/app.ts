@@ -29,15 +29,21 @@ score: number = 0;
 
 nextTree: number = 0;
 
-nextSnowman: number = 0;
+nextSnowman: number = 5000;
 
-nextMushroom: number = 0;
+nextMushroom: number = 5000;
+
+startTimer: number = 5000;
 
 snowField: Phaser.TileSprite;
 
 emitter: any;
 
-scoreText: any;
+scoreText: Phaser.Text;
+
+startText: Phaser.Text;
+
+startText2: Phaser.Text;
 
 
 
@@ -52,26 +58,40 @@ D: Phaser.Key;
         {   preload: this.preload, 
             create: this.create, 
             update:this.update, 
+            startScreen: this.startScreen,
+            startText: this.startText,
+            startText2: this.startText,
             treefall:this.treefall, 
             nextTree: this.nextTree,
             snowMaker: this.snowMaker, 
             nextSnowman: this.nextSnowman,
             nextMushroom: this.nextMushroom,
+            startTimer: this.startTimer,
             collisionHandler: this.collisionHandler,
             mushMaker: this.mushMaker,
+            score: this.score,
             scoreBoard: this.scoreBoard,
             render: this.render});
+  } 
+
+  WebFontConfig = {
+      google: {
+      families: ['VT323']
+    }
   }
 
     preload() {
+        this.game.load.script('webfont', 'https://fonts.googleapis.com/css?family=VT323');
         this.game.load.image("doug", "/images/doug.png");
         this.game.load.image("snowman", "/images/snowman.png");
         this.game.load.image("tree4", "/images/nature-tree4.png");        
-        this.game.load.image("snow3", "/images/realsnow3.png"); 
         this.game.load.image("snow", "/images/snow3.png");              
         this.game.load.image("gem", "/images/greenGem.png");                       
-        this.game.load.image("mushroom", "/images/mushroom.png");                       
-
+        this.game.load.image("mushroom", "/images/mushroom.png");  
+        this.game.load.image("space", "/images/space.png");    
+        this.game.load.image("planet19", "/images/planet_19.png");   
+        this.game.load.image("planet26", "/images/planet_26.png");                                                    
+                                                                                                         
 
     }
 
@@ -81,27 +101,26 @@ D: Phaser.Key;
         // this.game.debug.body(this.doug);
     }
 
+    startScreen() {
+    
+             this.game.world.remove(this.startText); 
+             this.game.world.remove(this.startText2);                                    
+    }
+
     treefall() {
 
-    //  this.trees = this.game.add.group();
-    //     if (this.game.time.now > this.nextTree) {
-    //         var lefttree = this.trees.create(-275, -800,"tree4");
-    //         this.game.physics.enable(lefttree, Phaser.Physics.ARCADE);
-    //         lefttree.body.collideWorldBounds = false;
-    //     }
-    //     for (var i=0; i < this.trees.children.length; i++){
-    //         this.trees.children[i].y += 50;
-    //     }
-                var lefttree = this.game.add.sprite (-275, -800,"tree4");
+                var lefttree = this.game.add.sprite (-10, -800,"planet26");
                 this.game.physics.enable(lefttree, Phaser.Physics.ARCADE);
                 lefttree.body.collideWorldBounds = false;
                 lefttree.body.gravity.y = 350; 
+                lefttree.scale.setTo(0.25, 0.25);
 
 
-                var righttree = this.game.add.sprite (760, -800,"tree4");
+                var righttree = this.game.add.sprite (950, -800,"planet19");
                 this.game.physics.enable(righttree, Phaser.Physics.ARCADE);
                 righttree.body.collideWorldBounds = false;
                 righttree.body.gravity.y = 375; 
+                righttree.scale.setTo(0.3, 0.3);
     }  
 
     snowMaker() {
@@ -141,9 +160,10 @@ D: Phaser.Key;
     scoreBoard(doug, mushroom) {
         this.mushrooms.remove(mushroom);
         //add to score
-        this.score +=1;
+        this.score += 1;
+        this.scoreText.text = ("" + this.score);
         console.log(this.score);
-        this.scoreText = this.score;
+        console.log(this.scoreText);
 
     }
 
@@ -151,7 +171,7 @@ D: Phaser.Key;
     create() {
         this.game.physics.startSystem(Phaser.Physics.ARCADE); 
 
-        this.snowField = this.game.add.tileSprite(0,0,1088, 640, "snow");
+        this.snowField = this.game.add.tileSprite(0,0,1088, 640, "space");
 
 //CREATE DOUG
         this.doug = this.game.add.sprite(this.game.width / 2, 0, "doug");
@@ -172,7 +192,7 @@ D: Phaser.Key;
         this.mushrooms.enableBody = true;
         this.mushrooms.physicsBodyType = Phaser.Physics.ARCADE;
 //create score
-        this.scoreText = this.game.add.text(0,0,"0", {fontSize: '64px', fill: "#00FF00"});
+        this.scoreText = this.game.add.text(0,0,"0", {fontSize: '80px', fill: "#00FF00", font: "VT323" });
 
 //emitter
         this.emitter = this.game.add.emitter(0,0,100);
@@ -183,6 +203,9 @@ D: Phaser.Key;
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.A = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
         this.S = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+        this.startText = this.game.add.text(0, this.game.height / 2 - 100, "DOUG THE SLUG", {fontSize: '120px', fill: "#00FF00", font: "VT323", align: "center" })            
+        this.startText2 = this.game.add.text(0, this.game.height / 2 , "go left / go right / eat mushrooms", {fontSize: '60px', fill: "#00FF00", font: "VT323", align: "center" })            
+
 
         
     }   
@@ -190,11 +213,18 @@ D: Phaser.Key;
     update() {
         this.game.input.update();
 
+        
+         if (this.game.time.now > this.startTimer){
+             this.startScreen();
+             this.startTimer = this.game.time.now + 500;
+      
+         } 
+
         this.snowField.tilePosition.y +=12;
 
         if (this.game.time.now > this.nextTree) {
             this.treefall();
-            this.nextTree = this.game.time.now + 500;
+            this.nextTree = this.game.time.now + 1000;
         }
 
         if (this.game.time.now > this.nextSnowman) {
@@ -206,6 +236,10 @@ D: Phaser.Key;
             this.mushMaker();
             this.nextMushroom = this.game.time.now + 600;
         }
+
+        
+
+        // console.log(this.game.time.now);
         
         this.game.physics.arcade.overlap(this.doug, this.snowmen, this.collisionHandler, null, this);
 

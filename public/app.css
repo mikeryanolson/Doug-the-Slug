@@ -1,11 +1,14 @@
 body {
     display : block;   
     margin : auto;
-    background-color:darkslategray;
+    background-color:#172727;
     width:100%;
     text-align: center;
+    font-family: 'VT323', monospace;
+    color: #00FF00;
     }
     
 canvas {    
     margin: auto;   
+    font-family: 'VT323', monospace;
     }
