@@ -96,7 +96,9 @@ D: Phaser.Key;
         this.game.load.image("mushroom", "/images/mushroom.png");  
         this.game.load.image("space", "/images/space.png");    
         this.game.load.image("planet19", "/images/planet_19.png");   
-        this.game.load.image("planet26", "/images/planet_26.png");                                                    
+        this.game.load.image("planet26", "/images/planet_26.png");  
+        this.game.load.image("saltshaker", "/images/salt-shaker.png");                                                    
+                                                          
                                                                                                          
 
     }
@@ -133,7 +135,7 @@ D: Phaser.Key;
 
             for (let i = 0; i < 4; i++) {
 
-                    this.snowman = this.snowmen.create(this.game.world.randomX, -75,"ast");
+                    this.snowman = this.snowmen.create(this.game.world.randomX, -75,"saltshaker");
                     this.game.physics.enable(this.snowman, Phaser.Physics.ARCADE);
                     this.snowman.body.collideWorldBounds = false;
                     this.snowman.body.gravity.y = 200; 
@@ -200,7 +202,7 @@ D: Phaser.Key;
         this.mushrooms.enableBody = true;
         this.mushrooms.physicsBodyType = Phaser.Physics.ARCADE;
 //create score
-        this.scoreText = this.game.add.text(0,0,"0", {fontSize: '80px', fill: "#00FF00", font: "VT323" });
+        this.scoreText = this.game.add.text(0,0,"0", {fontSize: '90px', fill: "#00FF00", font: "VT323" });
 
 //emitter
         this.emitter = this.game.add.emitter(0,0,100);
