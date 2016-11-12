@@ -21,7 +21,9 @@ doug: Phaser.Sprite;
 
 trees: Phaser.Group;
 
-tree: Phaser.Sprite;
+lefttree: Phaser.Sprite;
+
+righttree: Phaser.Sprite;
 
 cursors: Phaser.CursorKeys;
 
@@ -55,6 +57,7 @@ W: Phaser.Key;
 A: Phaser.Key;
 S: Phaser.Key;
 D: Phaser.Key;
+space: Phaser.Key;
   
 
     constructor() {
@@ -76,7 +79,7 @@ D: Phaser.Key;
             collisionHandler: this.collisionHandler,
             mushMaker: this.mushMaker,
             score: this.score,
-            scoreBoard: this.scoreBoard,
+            scoreBoard: this.scoreBoard,                                  
             render: this.render});
   } 
 
@@ -120,6 +123,7 @@ D: Phaser.Key;
                 this.game.physics.enable(lefttree, Phaser.Physics.ARCADE);
                 lefttree.body.collideWorldBounds = false;
                 lefttree.body.gravity.y = 350; 
+                lefttree.lifespan = 3000;
                 lefttree.scale.setTo(0.25, 0.25);
 
 
@@ -127,6 +131,7 @@ D: Phaser.Key;
                 this.game.physics.enable(righttree, Phaser.Physics.ARCADE);
                 righttree.body.collideWorldBounds = false;
                 righttree.body.gravity.y = 375; 
+                righttree.lifespan = 3000;
                 righttree.scale.setTo(0.3, 0.3);
     }  
 
@@ -140,6 +145,7 @@ D: Phaser.Key;
                     this.snowman.body.collideWorldBounds = false;
                     this.snowman.body.gravity.y = 200; 
                     this.snowman.body.immovable = false;
+                    this.snowman.lifespan = 3000;
                     this.snowman.body.setSize(20, 25, 10, 8);
             }
     }
@@ -151,6 +157,7 @@ D: Phaser.Key;
                     this.mushroom.body.collideWorldBounds = false;
                     this.mushroom.body.gravity.y = 200; 
                     this.mushroom.body.immovable = true;
+                    this.mushroom.lifespan = 3000;
                     this.mushroom.body.setSize(20, 25, 10, 8);
             }
     }
@@ -162,7 +169,7 @@ D: Phaser.Key;
         this.doug.kill();
         this.snowmen.remove(snowman);
         this.endText = this.game.add.text(0, this.game.height / 2 - 150, "DOUG DIED", {fontSize: '240px', fill: "#00FF00", font: "VT323", align: "center" })            
-        this.endText2 = this.game.add.text(0, this.game.height - 100 , "HIT REFRESH", {fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" })            
+        this.endText2 = this.game.add.text(0, this.game.height - 100 , "spacebar to live again", {fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" })            
         console.log(this.game.state);
     }
 
@@ -173,7 +180,6 @@ D: Phaser.Key;
         this.scoreText.text = ("" + this.score);
         console.log(this.score);
         console.log(this.scoreText);
-
     }
 
 
@@ -212,6 +218,10 @@ D: Phaser.Key;
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.A = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
         this.S = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
+        this.space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        
+
+//starttext
         this.startText = this.game.add.text(0, this.game.height / 2 - 100, "DOUG THE SLUG", {fontSize: '120px', fill: "#00FF00", font: "VT323", align: "center" })            
         this.startText2 = this.game.add.text(0, this.game.height / 2 , "go left / go right / eat mushrooms", {fontSize: '60px', fill: "#00FF00", font: "VT323", align: "center" })            
 
@@ -245,11 +255,9 @@ D: Phaser.Key;
             this.mushMaker();
             this.nextMushroom = this.game.time.now + 600;
         }
-
+     
         
-
-        // console.log(this.game.time.now);
-        
+//look for collision
         this.game.physics.arcade.overlap(this.doug, this.snowmen, this.collisionHandler, null, this);
 
         this.game.physics.arcade.overlap(this.doug, this.mushrooms, this.scoreBoard, null, this);        
@@ -259,6 +267,10 @@ D: Phaser.Key;
        
         if (this.cursors.left.isDown)
             (this.doug.position.x -= 15);  
+
+        if (this.space.isDown)
+            (location.reload());
+        
     }
 
 }
