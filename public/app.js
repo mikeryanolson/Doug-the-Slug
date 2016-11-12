@@ -44,7 +44,7 @@ var DougTheSlug = (function () {
         this.game.load.image("space", "/images/space.png");
         this.game.load.image("planet19", "/images/planet_19.png");
         this.game.load.image("planet26", "/images/planet_26.png");
-        this.game.load.image("saltshaker", "/images/salt-shaker.png");
+        this.game.load.image("saltshaker", "/images/salt-shaker2.png");
     };
     DougTheSlug.prototype.render = function () {
         // This renders debug information about physics bodies
@@ -96,6 +96,7 @@ var DougTheSlug = (function () {
         this.snowmen.remove(snowman);
         this.endText = this.game.add.text(0, this.game.height / 2 - 150, "DOUG DIED", { fontSize: '240px', fill: "#00FF00", font: "VT323", align: "center" });
         this.endText2 = this.game.add.text(0, this.game.height - 100, "HIT REFRESH", { fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" });
+        console.log(this.game.state);
     };
     DougTheSlug.prototype.scoreBoard = function (doug, mushroom) {
         this.mushrooms.remove(mushroom);
