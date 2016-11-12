@@ -45,6 +45,10 @@ var DougTheSlug = (function () {
         this.game.load.image("planet19", "/images/planet_19.png");
         this.game.load.image("planet26", "/images/planet_26.png");
         this.game.load.image("saltshaker", "/images/salt-shaker2.png");
+        this.game.load.audio("coin", "/sounds/coin.ogg");
+        this.game.load.audio("gameover", "/sounds/gameover.ogg");
+        this.game.load.audio("upgrade", "/sounds/upgrade.ogg");
+        this.game.load.audio("slugtheme", ["/sounds/slugtheme.mp3", "/sounds/slugtheme.ogg"]);
     };
     DougTheSlug.prototype.render = function () {
         // This renders debug information about physics bodies
@@ -105,6 +109,7 @@ var DougTheSlug = (function () {
     DougTheSlug.prototype.scoreBoard = function (doug, mushroom) {
         this.mushrooms.remove(mushroom);
         //add to score
+        // this.coin.play();
         this.score += 1;
         this.scoreText.text = ("" + this.score);
         console.log(this.score);
@@ -113,6 +118,7 @@ var DougTheSlug = (function () {
     DougTheSlug.prototype.create = function () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.snowField = this.game.add.tileSprite(0, 0, 1088, 640, "space");
+        this.music = this.game.sound.play("slugtheme");
         //CREATE DOUG
         this.doug = this.game.add.sprite(this.game.width / 2, 0, "doug");
         this.doug.scale.setTo(2.5, 2.5);
