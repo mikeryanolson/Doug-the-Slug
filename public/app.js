@@ -101,6 +101,7 @@ var DougTheSlug = (function () {
         this.emitter.y = this.doug.y;
         this.emitter.start(true, 10000, null, 60);
         this.doug.kill();
+        this.gameover.play();
         this.snowmen.remove(snowman);
         this.endText = this.game.add.text(0, this.game.height / 2 - 150, "DOUG DIED", { fontSize: '240px', fill: "#00FF00", font: "VT323", align: "center" });
         this.endText2 = this.game.add.text(0, this.game.height - 100, "spacebar to live again", { fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" });
@@ -109,7 +110,7 @@ var DougTheSlug = (function () {
     DougTheSlug.prototype.scoreBoard = function (doug, mushroom) {
         this.mushrooms.remove(mushroom);
         //add to score
-        // this.coin.play();
+        this.coin.play();
         this.score += 1;
         this.scoreText.text = ("" + this.score);
         console.log(this.score);
@@ -119,6 +120,9 @@ var DougTheSlug = (function () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
         this.snowField = this.game.add.tileSprite(0, 0, 1088, 640, "space");
         this.music = this.game.sound.play("slugtheme");
+        this.coin = this.game.add.audio("coin");
+        this.gameover = this.game.add.audio("gameover");
+        this.upgrade = this.game.add.audio("upgrade");
         //CREATE DOUG
         this.doug = this.game.add.sprite(this.game.width / 2, 0, "doug");
         this.doug.scale.setTo(2.5, 2.5);
