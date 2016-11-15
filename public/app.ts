@@ -15,11 +15,17 @@ gameover: Phaser.Sound;
 
 upgrade : Phaser.Sound;
 
+evil: Phaser.Sound;
+
 snowmen: Phaser.Group;
 
 snowman: Phaser.Sprite;
 
 mushrooms: Phaser.Group;
+
+roids: Phaser.Group;
+
+roid: any;
 
 mushroom: any;
 
@@ -47,8 +53,8 @@ cursors: Phaser.CursorKeys;
 
 score: number = 0;
 
-nextTree: number = 4000;
-nextTree2: number = 4000;
+nextTree: number = 3000;
+nextTree2: number = 3000;
 
 nextSnowman: number = 5000;
 
@@ -106,12 +112,14 @@ space: Phaser.Key;
             specMush: this.specMush,
             evilMaker: this.evilMaker,
             evilTimer: this.evilTimer,
+            astCollide: this.astCollide,
             evilCollide: this.evilCollide,
             specMushCollide: this.specMushCollide,
             collisionHandler: this.collisionHandler,
             mushMaker: this.mushMaker,
             score: this.score,
-            scoreBoard: this.scoreBoard,                                  
+            scoreBoard: this.scoreBoard,
+            reset: this.reset,                                  
             render: this.render});
 
             
@@ -137,7 +145,8 @@ space: Phaser.Key;
         this.game.load.image("greenmush", "/images/greenmush.png");
         this.game.load.audio("coin", "/sounds/coin.ogg");                                                   
         this.game.load.audio("gameover", "/sounds/gameover.ogg");                                                   
-        this.game.load.audio("upgrade", "/sounds/upgrade.ogg");                                                   
+        this.game.load.audio("upgrade", "/sounds/upgrade.ogg");         
+        this.game.load.audio("evil", "/sounds/evil.ogg");                                                                                                     
         this.game.load.audio("slugtheme", ["/sounds/slugtheme.mp3", "/sounds/slugtheme.ogg"]);                                                   
                                                                                                                                                          
     }
@@ -157,20 +166,20 @@ space: Phaser.Key;
 
     treefall() {
 
-                this.lefttree = this.trees.create (-10, -800,"planet26");
+                this.lefttree = this.trees.create (-10, -100,"planet26");
                 this.lefttree.body.collideWorldBounds = false;
                 // lefttree.body.gravity.y = 350;    
-                this.lefttree.lifespan = 5000;
+                this.lefttree.lifespan = 10000;
                 this.lefttree.scale.setTo(0.25, 0.25);
              
     }  
 
     treefall2() {
 
-                this.righttree = this.trees2.create (950, -800,"planet19");
+                this.righttree = this.trees2.create (950, -100,"planet19");
                 this.righttree.body.collideWorldBounds = false;
                 // lefttree.body.gravity.y = 350;    
-                this.righttree.lifespan = 5000;
+                this.righttree.lifespan = 10000;
                 this.righttree.scale.setTo(0.25, 0.25);
              
     }  
@@ -234,6 +243,21 @@ space: Phaser.Key;
 
     evilCollide (doug, evilMushroom){
         this.evilMushrooms.remove(evilMushroom);
+        this.evil.play();
+        this.roid = this.roids.create(this.game.world.randomX, -500, "ast");
+        this.roid.body.gravity.y = 200;
+        this.roid.scale.setTo(5,5);
+    }
+
+    astCollide (doug, roid) {
+        this.emitter.x = this.doug.x+50;
+        this.emitter.y = this.doug.y;     
+        this.emitter.start(true, 10000, null, 60);   
+        this.doug.kill();
+        this.gameover.play();
+        this.snowmen.remove(roid);
+        this.endText = this.game.add.text(0, this.game.height / 2 - 150, "DOUG DIED", {fontSize: '240px', fill: "#00FF00", font: "VT323", align: "center" })            
+        this.endText2 = this.game.add.text(0, this.game.height - 100 , "spacebar to live again", {fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" }) 
     }
 
     collisionHandler(doug, snowman) {
@@ -255,6 +279,11 @@ space: Phaser.Key;
         this.scoreText.text = ("" + this.score);
     }
 
+    reset() {
+            this.game.state.start(this.game.state.current);
+            this.music.restart("slugtheme", 1, 1, true);
+    }
+
 
     create() {
         this.game.physics.startSystem(Phaser.Physics.ARCADE); 
@@ -267,6 +296,8 @@ space: Phaser.Key;
         this.coin = this.game.add.audio("coin");
         this.gameover = this.game.add.audio("gameover");
         this.upgrade = this.game.add.audio("upgrade");
+        this.evil = this.game.add.audio("evil");
+        
         
 
 //CREATE DOUG
@@ -281,12 +312,13 @@ space: Phaser.Key;
 //tree group
         this.trees = this.game.add.group();
         this.trees.enableBody = true;
-        this.trees.physicsBodyType = Phaser.Physics.ARCADE;
+        // this.trees.physicsBodyType = Phaser.Physics.ARCADE;
 
 //tree2 group
         this.trees2 = this.game.add.group();
         this.trees2.enableBody = true;
-        this.trees2.physicsBodyType = Phaser.Physics.ARCADE;
+        // this.trees2.physicsBodyType = Phaser.Physics.ARCADE;
+
 //snowmen group
         this.snowmen = this.game.add.group();
         this.snowmen.enableBody = true;
@@ -306,6 +338,10 @@ space: Phaser.Key;
         this.evilMushrooms = this.game.add.group();
         this.evilMushrooms.enableBody = true;
         this.evilMushrooms.physicsBodyType = Phaser.Physics.ARCADE;
+//roids group
+        this.roids = this.game.add.group();
+        this.roids.enableBody = true;
+        this.roids.physicsBodyType = Phaser.Physics.ARCADE;
 
 //create score
         this.scoreText = this.game.add.text(0,0,"0", {fontSize: '100px', fill: "#00FF00", font: "VT323" });
@@ -343,17 +379,17 @@ space: Phaser.Key;
 
         if (this.game.time.now > this.nextTree) {
             this.treefall();
-            this.nextTree = this.game.time.now + 1500;
+            this.nextTree = this.game.time.now + 5000;
         }
 
          if (this.game.time.now > this.nextTree2) {
             this.treefall2();
-            this.nextTree2 = this.game.time.now + 1500;
+            this.nextTree2 = this.game.time.now + 5000;
         }
 
         if (this.game.time.now > this.nextSnowman) {
             this.snowMaker();
-            this.nextSnowman = this.game.time.now + 400;
+            this.nextSnowman = this.game.time.now + 600;
         }
 
         if (this.game.time.now > this.nextMushroom) {
@@ -389,11 +425,11 @@ space: Phaser.Key;
             }, this, false);
 
             this.trees.forEach((lefttree) => {
-                lefttree.y += 5;            
+                lefttree.y += 3;            
             }, this, false);
 
             this.trees2.forEach((righttree) => {
-                righttree.y += 5;            
+                righttree.y += 3;            
             }, this, false);
 
 //look for collision
@@ -405,6 +441,9 @@ space: Phaser.Key;
 
         this.game.physics.arcade.overlap(this.doug, this.evilMushrooms, this.evilCollide, null, this); 
 
+        this.game.physics.arcade.overlap(this.doug, this.roids, this.astCollide, null, this); 
+
+
 
         if (this.cursors.right.isDown)
             (this.doug.position.x += 15);          
@@ -413,7 +452,8 @@ space: Phaser.Key;
             (this.doug.position.x -= 15);  
 
         if (this.space.isDown)
-            (location.reload()); 
+            // (location.reload()); 
+            this.reset();
         
     }
 
