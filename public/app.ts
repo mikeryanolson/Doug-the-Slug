@@ -2,7 +2,6 @@
 /// <reference path="/Users/michaelolson/workspace/Final_Project/phaser.d.ts" />
 /// <reference path="/Users/michaelolson/workspace/Final_Project/p2.d.ts" />
 
-module DougTheSlug {
 
 class DougTheSlug {
 
@@ -24,27 +23,36 @@ mushrooms: Phaser.Group;
 
 mushroom: any;
 
+specialMushrooms: Phaser.Group;
+
+specialMushroom: any;
+
+evilMushrooms: Phaser.Group;
+
+evilMushroom: any;
+
 map: Phaser.Tilemap;
 
 doug: Phaser.Sprite;
 
 trees: Phaser.Group;
 
+trees2: Phaser.Group;
+
 lefttree: Phaser.Sprite;
 
 righttree: Phaser.Sprite;
-
-specialMushrooms: Phaser.Group;
-
-specialMushroom: any;
 
 cursors: Phaser.CursorKeys;
 
 score: number = 0;
 
-nextTree: number = 0;
+nextTree: number = 4000;
+nextTree2: number = 4000;
 
 nextSnowman: number = 5000;
+
+descendTimer: number = 5000;
 
 nextMushroom: number = 5000;
 
@@ -52,7 +60,7 @@ startTimer: number = 5000;
 
 specTimer: number = 10000;
 
-leveltwotimer: number = 6000;
+evilTimer: number = 13000;
 
 snowField: Phaser.TileSprite;
 
@@ -87,14 +95,18 @@ space: Phaser.Key;
             endText: this.endText,
             endText2: this.endText2,
             treefall:this.treefall, 
+            treefall2:this.treefall2,             
             nextTree: this.nextTree,
+            nextTree2: this.nextTree2,            
             snowMaker: this.snowMaker, 
             nextSnowman: this.nextSnowman,
             nextMushroom: this.nextMushroom,
             startTimer: this.startTimer,
             specTimer: this.specTimer,
-            leveltwotimer: this.leveltwotimer,
             specMush: this.specMush,
+            evilMaker: this.evilMaker,
+            evilTimer: this.evilTimer,
+            evilCollide: this.evilCollide,
             specMushCollide: this.specMushCollide,
             collisionHandler: this.collisionHandler,
             mushMaker: this.mushMaker,
@@ -117,6 +129,7 @@ space: Phaser.Key;
         this.game.load.image("ast", "/images/a.png");      
         this.game.load.image("gem", "/images/greenGem.png");                       
         this.game.load.image("mushroom", "/images/mushroom.png");  
+        this.game.load.image("evilmush", "/images/evilmush.png");          
         this.game.load.image("space", "/images/space.png");      
         this.game.load.image("planet19", "/images/planet_19.png");   
         this.game.load.image("planet26", "/images/planet_26.png");  
@@ -131,8 +144,8 @@ space: Phaser.Key;
 
     render() {
         // This renders debug information about physics bodies
-        this.game.debug.bodyInfo(this.doug, 200, 32);
-        this.game.debug.body(this.doug);
+        // this.game.debug.bodyInfo(this.doug, 200, 32);
+        // this.game.debug.body(this.doug);
     }
 
 
@@ -144,20 +157,22 @@ space: Phaser.Key;
 
     treefall() {
 
-                var lefttree = this.game.add.sprite (-10, -800,"planet26");
-                this.game.physics.enable(lefttree, Phaser.Physics.ARCADE);
-                lefttree.body.collideWorldBounds = false;
-                lefttree.body.gravity.y = 350; 
-                lefttree.lifespan = 3000;
-                lefttree.scale.setTo(0.25, 0.25);
+                this.lefttree = this.trees.create (-10, -800,"planet26");
+                this.lefttree.body.collideWorldBounds = false;
+                // lefttree.body.gravity.y = 350;    
+                this.lefttree.lifespan = 5000;
+                this.lefttree.scale.setTo(0.25, 0.25);
+             
+    }  
 
+    treefall2() {
 
-                var righttree = this.game.add.sprite (950, -800,"planet19");
-                this.game.physics.enable(righttree, Phaser.Physics.ARCADE);
-                righttree.body.collideWorldBounds = false;
-                righttree.body.gravity.y = 375; 
-                righttree.lifespan = 3000;
-                righttree.scale.setTo(0.3, 0.3);
+                this.righttree = this.trees2.create (950, -800,"planet19");
+                this.righttree.body.collideWorldBounds = false;
+                // lefttree.body.gravity.y = 350;    
+                this.righttree.lifespan = 5000;
+                this.righttree.scale.setTo(0.25, 0.25);
+             
     }  
 
     snowMaker() {
@@ -167,17 +182,20 @@ space: Phaser.Key;
 
                     this.snowman = this.snowmen.create(this.game.world.randomX, -75,"saltshaker");
                     this.snowman.body.collideWorldBounds = false;
-                    this.snowman.body.gravity.y = 200; 
+                    // this.snowman.body.gravity.y = 200; 
                     this.snowman.body.immovable = false;
                     this.snowman.lifespan = 3000;
-            }
+            } 
+
     }
+       
+
 
     mushMaker() {
         for (let i = 0; i < 2; i++) {
                     this.mushroom = this.mushrooms.create(this.game.world.randomX, -75,"mushroom");
                     this.mushroom.body.collideWorldBounds = false;
-                    this.mushroom.body.gravity.y = 200; 
+                    // this.mushroom.body.gravity.y = 200; 
                     this.mushroom.body.immovable = true;
                     this.mushroom.lifespan = 3000;
  
@@ -190,7 +208,17 @@ space: Phaser.Key;
                     this.specialMushroom.body.collideWorldBounds = false;
                     this.specialMushroom.body.immovable = true;
                     this.specialMushroom.lifespan = 5000;
-                    this.specialMushroom.body.gravity.y = 200; 
+                    // this.specialMushroom.body.gravity.y = 200; 
+        }
+    }
+
+    evilMaker() {
+        for (let i = 0; i < 1; i++) {
+                    this.evilMushroom = this.evilMushrooms.create(this.game.world.randomX, -75,"evilmush");
+                    this.evilMushroom.body.collideWorldBounds = false;
+                    this.evilMushroom.body.immovable = true;
+                    this.evilMushroom.lifespan = 5000;
+                    // this.evilMushroom.body.gravity.y = 200; 
         }
     }
 
@@ -202,6 +230,10 @@ space: Phaser.Key;
         this.doug.scale.x -= 0.1;
         this.scoreText.text = ("" + this.score);
 
+    }
+
+    evilCollide (doug, evilMushroom){
+        this.evilMushrooms.remove(evilMushroom);
     }
 
     collisionHandler(doug, snowman) {
@@ -246,6 +278,15 @@ space: Phaser.Key;
         this.doug.body.bounce.y = 0.2;
         this.doug.body.setSize(15, 25, 9, 8);
 
+//tree group
+        this.trees = this.game.add.group();
+        this.trees.enableBody = true;
+        this.trees.physicsBodyType = Phaser.Physics.ARCADE;
+
+//tree2 group
+        this.trees2 = this.game.add.group();
+        this.trees2.enableBody = true;
+        this.trees2.physicsBodyType = Phaser.Physics.ARCADE;
 //snowmen group
         this.snowmen = this.game.add.group();
         this.snowmen.enableBody = true;
@@ -260,6 +301,11 @@ space: Phaser.Key;
         this.specialMushrooms = this.game.add.group();
         this.specialMushrooms.enableBody = true;
         this.specialMushrooms.physicsBodyType = Phaser.Physics.ARCADE;
+
+//evil mushrooms group
+        this.evilMushrooms = this.game.add.group();
+        this.evilMushrooms.enableBody = true;
+        this.evilMushrooms.physicsBodyType = Phaser.Physics.ARCADE;
 
 //create score
         this.scoreText = this.game.add.text(0,0,"0", {fontSize: '100px', fill: "#00FF00", font: "VT323" });
@@ -300,6 +346,11 @@ space: Phaser.Key;
             this.nextTree = this.game.time.now + 1500;
         }
 
+         if (this.game.time.now > this.nextTree2) {
+            this.treefall2();
+            this.nextTree2 = this.game.time.now + 1500;
+        }
+
         if (this.game.time.now > this.nextSnowman) {
             this.snowMaker();
             this.nextSnowman = this.game.time.now + 400;
@@ -312,16 +363,47 @@ space: Phaser.Key;
 
         if (this.game.time.now > this.specTimer) {
             this.specMush();
-            this.specTimer = this.game.time.now + 1500;
+            this.specTimer = this.game.time.now + 1200;
         }
 
+        if (this.game.time.now > this.evilTimer) {
+            this.evilMaker();
+            this.evilTimer = this.game.time.now + 1000;
+        }
+
+//move items Y axis
+            this.mushrooms.forEach((mushroom) => {
+                mushroom.y += 5;
+            }, this, false);
+
+            this.specialMushrooms.forEach((specialMushroom) => {
+                specialMushroom.y += 4;
+            }, this, false);
         
+            this.evilMushrooms.forEach((evilMushroom) => {
+                evilMushroom.y += 4;
+            }, this, false);
+
+            this.snowmen.forEach((snowman) => {
+                snowman.y += 5;
+            }, this, false);
+
+            this.trees.forEach((lefttree) => {
+                lefttree.y += 5;            
+            }, this, false);
+
+            this.trees2.forEach((righttree) => {
+                righttree.y += 5;            
+            }, this, false);
+
 //look for collision
         this.game.physics.arcade.overlap(this.doug, this.snowmen, this.collisionHandler, null, this);
 
         this.game.physics.arcade.overlap(this.doug, this.mushrooms, this.scoreBoard, null, this); 
  
         this.game.physics.arcade.overlap(this.doug, this.specialMushrooms, this.specMushCollide, null, this); 
+
+        this.game.physics.arcade.overlap(this.doug, this.evilMushrooms, this.evilCollide, null, this); 
 
 
         if (this.cursors.right.isDown)
@@ -343,5 +425,3 @@ window.onload = () => {
     let game = new DougTheSlug();
 
 };
-
-}
