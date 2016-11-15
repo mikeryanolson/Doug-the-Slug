@@ -2,6 +2,7 @@
 /// <reference path="/Users/michaelolson/workspace/Final_Project/phaser.d.ts" />
 /// <reference path="/Users/michaelolson/workspace/Final_Project/p2.d.ts" />
 
+module DougTheSlug {
 
 class DougTheSlug {
 
@@ -33,6 +34,10 @@ lefttree: Phaser.Sprite;
 
 righttree: Phaser.Sprite;
 
+specialMushrooms: Phaser.Group;
+
+specialMushroom: any;
+
 cursors: Phaser.CursorKeys;
 
 score: number = 0;
@@ -44,6 +49,10 @@ nextSnowman: number = 5000;
 nextMushroom: number = 5000;
 
 startTimer: number = 5000;
+
+specTimer: number = 10000;
+
+leveltwotimer: number = 6000;
 
 snowField: Phaser.TileSprite;
 
@@ -59,8 +68,6 @@ endText: Phaser.Text;
 
 endText2: Phaser.Text;
 
-
-
 W: Phaser.Key;
 A: Phaser.Key;
 S: Phaser.Key;
@@ -70,6 +77,7 @@ space: Phaser.Key;
 
     constructor() {
         this.game = new Phaser.Game(1088, 640, Phaser.AUTO, "content", 
+
         {   preload: this.preload, 
             create: this.create, 
             update:this.update, 
@@ -84,11 +92,17 @@ space: Phaser.Key;
             nextSnowman: this.nextSnowman,
             nextMushroom: this.nextMushroom,
             startTimer: this.startTimer,
+            specTimer: this.specTimer,
+            leveltwotimer: this.leveltwotimer,
+            specMush: this.specMush,
+            specMushCollide: this.specMushCollide,
             collisionHandler: this.collisionHandler,
             mushMaker: this.mushMaker,
             score: this.score,
             scoreBoard: this.scoreBoard,                                  
             render: this.render});
+
+            
   } 
 
   WebFontConfig = {
@@ -100,34 +114,33 @@ space: Phaser.Key;
     preload() {
         this.game.load.script('webfont', 'https://fonts.googleapis.com/css?family=VT323');
         this.game.load.image("doug", "/images/doug.png");
-        this.game.load.image("ast", "/images/a.png");
-        this.game.load.image("tree4", "/images/nature-tree4.png");        
-        this.game.load.image("snow", "/images/snow3.png");              
+        this.game.load.image("ast", "/images/a.png");      
         this.game.load.image("gem", "/images/greenGem.png");                       
         this.game.load.image("mushroom", "/images/mushroom.png");  
-        this.game.load.image("space", "/images/space.png");    
+        this.game.load.image("space", "/images/space.png");      
         this.game.load.image("planet19", "/images/planet_19.png");   
         this.game.load.image("planet26", "/images/planet_26.png");  
         this.game.load.image("saltshaker", "/images/salt-shaker2.png"); 
+        this.game.load.image("greenmush", "/images/greenmush.png");
         this.game.load.audio("coin", "/sounds/coin.ogg");                                                   
         this.game.load.audio("gameover", "/sounds/gameover.ogg");                                                   
         this.game.load.audio("upgrade", "/sounds/upgrade.ogg");                                                   
         this.game.load.audio("slugtheme", ["/sounds/slugtheme.mp3", "/sounds/slugtheme.ogg"]);                                                   
-                                                          
-                                                                                                         
-
+                                                                                                                                                         
     }
 
     render() {
         // This renders debug information about physics bodies
-        // this.game.debug.bodyInfo(this.doug, 32, 32);
-        // this.game.debug.body(this.doug);
+        this.game.debug.bodyInfo(this.doug, 200, 32);
+        this.game.debug.body(this.doug);
     }
+
 
     startScreen() {
              this.game.world.remove(this.startText); 
              this.game.world.remove(this.startText2);                                    
     }
+
 
     treefall() {
 
@@ -153,25 +166,42 @@ space: Phaser.Key;
             for (let i = 0; i < 4; i++) {
 
                     this.snowman = this.snowmen.create(this.game.world.randomX, -75,"saltshaker");
-                    this.game.physics.enable(this.snowman, Phaser.Physics.ARCADE);
                     this.snowman.body.collideWorldBounds = false;
                     this.snowman.body.gravity.y = 200; 
                     this.snowman.body.immovable = false;
                     this.snowman.lifespan = 3000;
-                    this.snowman.body.setSize(20, 25, 10, 8);
             }
     }
 
     mushMaker() {
         for (let i = 0; i < 2; i++) {
                     this.mushroom = this.mushrooms.create(this.game.world.randomX, -75,"mushroom");
-                    this.game.physics.enable(this.mushroom, Phaser.Physics.ARCADE);
                     this.mushroom.body.collideWorldBounds = false;
                     this.mushroom.body.gravity.y = 200; 
                     this.mushroom.body.immovable = true;
                     this.mushroom.lifespan = 3000;
-                    this.mushroom.body.setSize(20, 25, 10, 8);
+ 
             }
+    }
+
+    specMush() {
+        for (let i = 0; i < 1; i++) {
+                    this.specialMushroom = this.specialMushrooms.create(this.game.world.randomX, -75,"greenmush");
+                    this.specialMushroom.body.collideWorldBounds = false;
+                    this.specialMushroom.body.immovable = true;
+                    this.specialMushroom.lifespan = 5000;
+                    this.specialMushroom.body.gravity.y = 200; 
+        }
+    }
+
+    specMushCollide (doug, specialMushroom) {
+        this.upgrade.play();
+        this.specialMushrooms.remove(specialMushroom);
+        this.score *= 2;
+        this.doug.scale.y += 0.4;
+        this.doug.scale.x -= 0.1;
+        this.scoreText.text = ("" + this.score);
+
     }
 
     collisionHandler(doug, snowman) {
@@ -183,7 +213,6 @@ space: Phaser.Key;
         this.snowmen.remove(snowman);
         this.endText = this.game.add.text(0, this.game.height / 2 - 150, "DOUG DIED", {fontSize: '240px', fill: "#00FF00", font: "VT323", align: "center" })            
         this.endText2 = this.game.add.text(0, this.game.height - 100 , "spacebar to live again", {fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" })            
-        console.log(this.game.state);
     }
 
     scoreBoard(doug, mushroom) {
@@ -192,8 +221,6 @@ space: Phaser.Key;
         this.coin.play();
         this.score += 1;
         this.scoreText.text = ("" + this.score);
-        console.log(this.score);
-        console.log(this.scoreText);
     }
 
 
@@ -201,8 +228,9 @@ space: Phaser.Key;
         this.game.physics.startSystem(Phaser.Physics.ARCADE); 
 
         this.snowField = this.game.add.tileSprite(0,0,1088, 640, "space");
-
-        this.music = this.game.sound.play("slugtheme");
+        
+        
+        this.music = this.game.sound.play("slugtheme", 1, true);
 
         this.coin = this.game.add.audio("coin");
         this.gameover = this.game.add.audio("gameover");
@@ -227,8 +255,14 @@ space: Phaser.Key;
         this.mushrooms = this.game.add.group();
         this.mushrooms.enableBody = true;
         this.mushrooms.physicsBodyType = Phaser.Physics.ARCADE;
+
+//special mushrooms group
+        this.specialMushrooms = this.game.add.group();
+        this.specialMushrooms.enableBody = true;
+        this.specialMushrooms.physicsBodyType = Phaser.Physics.ARCADE;
+
 //create score
-        this.scoreText = this.game.add.text(0,0,"0", {fontSize: '90px', fill: "#00FF00", font: "VT323" });
+        this.scoreText = this.game.add.text(0,0,"0", {fontSize: '100px', fill: "#00FF00", font: "VT323" });
 
 //emitter
         this.emitter = this.game.add.emitter(0,0,100);
@@ -257,14 +291,13 @@ space: Phaser.Key;
          if (this.game.time.now > this.startTimer){
              this.startScreen();
              this.startTimer = this.game.time.now + 500;
-      
          } 
 
         this.snowField.tilePosition.y +=12;
 
         if (this.game.time.now > this.nextTree) {
             this.treefall();
-            this.nextTree = this.game.time.now + 1000;
+            this.nextTree = this.game.time.now + 1500;
         }
 
         if (this.game.time.now > this.nextSnowman) {
@@ -276,12 +309,20 @@ space: Phaser.Key;
             this.mushMaker();
             this.nextMushroom = this.game.time.now + 600;
         }
-     
+
+        if (this.game.time.now > this.specTimer) {
+            this.specMush();
+            this.specTimer = this.game.time.now + 1500;
+        }
+
         
 //look for collision
         this.game.physics.arcade.overlap(this.doug, this.snowmen, this.collisionHandler, null, this);
 
-        this.game.physics.arcade.overlap(this.doug, this.mushrooms, this.scoreBoard, null, this);        
+        this.game.physics.arcade.overlap(this.doug, this.mushrooms, this.scoreBoard, null, this); 
+ 
+        this.game.physics.arcade.overlap(this.doug, this.specialMushrooms, this.specMushCollide, null, this); 
+
 
         if (this.cursors.right.isDown)
             (this.doug.position.x += 15);          
@@ -290,12 +331,11 @@ space: Phaser.Key;
             (this.doug.position.x -= 15);  
 
         if (this.space.isDown)
-            (location.reload());
+            (location.reload()); 
         
     }
 
 }
-
 
 
 window.onload = () => {
@@ -303,3 +343,5 @@ window.onload = () => {
     let game = new DougTheSlug();
 
 };
+
+}
