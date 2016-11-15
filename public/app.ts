@@ -282,6 +282,7 @@ space: Phaser.Key;
     reset() {
             this.game.state.start(this.game.state.current);
             this.music.restart("slugtheme", 1, 1, true);
+            this.score = 0;
     }
 
 

@@ -168,6 +168,7 @@ var DougTheSlug = (function () {
     DougTheSlug.prototype.reset = function () {
         this.game.state.start(this.game.state.current);
         this.music.restart("slugtheme", 1, 1, true);
+        this.score = 0;
     };
     DougTheSlug.prototype.create = function () {
         this.game.physics.startSystem(Phaser.Physics.ARCADE);
