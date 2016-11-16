@@ -4,7 +4,7 @@
 var DougTheSlug = (function () {
     function DougTheSlug() {
         this.score = 0;
-        // highScore = JSON.parse(localStorage.getItem('highscore'));
+        this.highScore = JSON.parse(localStorage.getItem('highscore'));
         this.nextTree = 3000;
         this.nextTree2 = 3000;
         this.nextSnowman = 5000;
@@ -52,6 +52,7 @@ var DougTheSlug = (function () {
     DougTheSlug.prototype.preload = function () {
         this.game.load.script('webfont', 'https://fonts.googleapis.com/css?family=VT323');
         this.game.load.image("doug", "/images/doug.png");
+        this.game.load.image("slime", "/images/slime.png");
         this.game.load.image("ast", "/images/a.png");
         this.game.load.image("gem", "/images/greenGem.png");
         this.game.load.image("mushroom", "/images/mushroom.png");
@@ -166,13 +167,14 @@ var DougTheSlug = (function () {
         this.coin.play();
         this.score += 1;
         this.scoreText.text = ("" + this.score);
-        // if (localStorage.getItem('highScore') === null){
-        //     localStorage.setItem('highscore', this.scoreText.text)
-        // }
-        // else if (this.score > this.highScore){
-        //     localStorage.setItem('highscore', this.scoreText.text)
-        // }
-        // this.highScoreText.text = ("HIGH SCORE: " + this.highScore);
+        localStorage.setItem('highscore', '0');
+        if (localStorage.getItem('highScore') === null) {
+            localStorage.setItem('highscore', this.scoreText.text);
+        }
+        else if (this.score > this.highScore) {
+            localStorage.setItem('highscore', this.scoreText.text);
+        }
+        this.highScoreText.text = ("HIGH SCORE: " + this.highScore);
     };
     DougTheSlug.prototype.reset = function () {
         this.game.state.start(this.game.state.current);
@@ -226,7 +228,7 @@ var DougTheSlug = (function () {
         //create score
         this.scoreText = this.game.add.text(0, 0, "0", { fontSize: '100px', fill: "#00FF00", font: "VT323" });
         //create high score
-        // this.highScoreText = this.game.add.text(700,0,"0", {fontSize: '50px', fill: "#00FF00", font: "VT323" });
+        this.highScoreText = this.game.add.text(750, 0, "HIGH SCORE: 500", { fontSize: '50px', fill: "#00FF00", font: "VT323" });
         //emitter
         this.emitter = this.game.add.emitter(0, 0, 100);
         this.emitter.makeParticles("gem");
@@ -269,7 +271,7 @@ var DougTheSlug = (function () {
         }
         if (this.game.time.now > this.evilTimer) {
             this.evilMaker();
-            this.evilTimer = this.game.time.now + 1000;
+            this.evilTimer = this.game.time.now + 1500;
         }
         //move items Y axis
         this.mushrooms.forEach(function (mushroom) {
