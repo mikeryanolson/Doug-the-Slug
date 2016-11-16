@@ -55,7 +55,7 @@ cursors: Phaser.CursorKeys;
 
 score: number = 0;
 
-highScore = JSON.parse(localStorage.getItem('highscore'));
+highScore: number;
 
 nextTree: number = 3000;
 nextTree2: number = 3000;
@@ -75,6 +75,8 @@ evilTimer: number = 13000;
 snowField: Phaser.TileSprite;
 
 emitter: any;
+
+slimeEmitter: any;
 
 scoreText: Phaser.Text;
 
@@ -105,6 +107,7 @@ space: Phaser.Key;
             startText: this.startText,
             startText2: this.startText,
             endText: this.endText,
+            slimeTrail: this.slimeTrail,
             endText2: this.endText2,
             treefall:this.treefall, 
             treefall2:this.treefall2,             
@@ -192,6 +195,12 @@ space: Phaser.Key;
              
     }  
 
+    slimeTrail() {
+            this.slimeEmitter.x = this.doug.x + 40;
+            this.slimeEmitter.y = this.doug.y + 70;     
+            this.slimeEmitter.start(true, 400, null, 1); 
+    }
+
     snowMaker() {
         //CREATE SNOWMEN
 
@@ -205,8 +214,6 @@ space: Phaser.Key;
             } 
 
     }
-       
-
 
     mushMaker() {
         for (let i = 0; i < 2; i++) {
@@ -286,13 +293,14 @@ space: Phaser.Key;
         this.score += 1;
         this.scoreText.text = ("" + this.score);
 
-        localStorage.setItem('highscore', '0');
+
         
-        if (localStorage.getItem('highScore') === null){
-            localStorage.setItem('highscore', this.scoreText.text)
+        if (isNaN(this.highScore)) {
+            this.highScore = 0;
         }
-        else if (this.score > this.highScore){
-            localStorage.setItem('highscore', this.scoreText.text)
+        if (this.score > this.highScore){
+            this.highScore = this.score;
+            localStorage.setItem('highscore', this.highScore.toString());
         }
 
         this.highScoreText.text = ("HIGH SCORE: " + this.highScore);
@@ -328,6 +336,7 @@ space: Phaser.Key;
         this.doug.body.gravity.y = 4000; 
         this.doug.body.bounce.y = 0.2;
         this.doug.body.setSize(15, 25, 9, 8);
+
 
 //tree group
         this.trees = this.game.add.group();
@@ -367,12 +376,18 @@ space: Phaser.Key;
         this.scoreText = this.game.add.text(0,0,"0", {fontSize: '100px', fill: "#00FF00", font: "VT323" });
 
 //create high score
-        this.highScoreText = this.game.add.text(750,0,"HIGH SCORE: 500", {fontSize: '50px', fill: "#00FF00", font: "VT323" });
+        this.highScore = parseInt(localStorage.getItem('highscore')) || 0;
+        this.highScoreText = this.game.add.text(750,0,"HIGH SCORE: "+ (this.highScore), {fontSize: '50px', fill: "#00FF00", font: "VT323" });
 
 //emitter
         this.emitter = this.game.add.emitter(0,0,100);
         this.emitter.makeParticles("gem");
         this.emitter.gravity = 50;
+
+//slimeEmitter
+    this.slimeEmitter = this.game.add.emitter(0, 0, 1)
+    this.slimeEmitter.makeParticles("slime");
+    this.slimeEmitter.gravity = 1500;
 
 //cursors
         this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -391,7 +406,6 @@ space: Phaser.Key;
 
     update() {
         this.game.input.update();
-
         
          if (this.game.time.now > this.startTimer){
              this.startScreen();
@@ -427,7 +441,7 @@ space: Phaser.Key;
 
         if (this.game.time.now > this.evilTimer) {
             this.evilMaker();
-            this.evilTimer = this.game.time.now + 1500;
+            this.evilTimer = this.game.time.now + 2000;
         }
 
 //move items Y axis
@@ -469,10 +483,14 @@ space: Phaser.Key;
 
 
         if (this.cursors.right.isDown)
-            (this.doug.position.x += 15);          
+            (this.doug.position.x += 15); 
+            this.slimeTrail();      
+              
        
         if (this.cursors.left.isDown)
-            (this.doug.position.x -= 15);  
+            (this.doug.position.x -= 15);   
+            this.slimeTrail();      
+
 
         if (this.space.isDown)
             // (location.reload()); 
