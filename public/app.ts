@@ -53,6 +53,8 @@ cursors: Phaser.CursorKeys;
 
 score: number = 0;
 
+// highScore = JSON.parse(localStorage.getItem('highscore'));
+
 nextTree: number = 3000;
 nextTree2: number = 3000;
 
@@ -73,6 +75,8 @@ snowField: Phaser.TileSprite;
 emitter: any;
 
 scoreText: Phaser.Text;
+
+highScoreText: Phaser.Text;
 
 startText: Phaser.Text;
 
@@ -118,6 +122,7 @@ space: Phaser.Key;
             collisionHandler: this.collisionHandler,
             mushMaker: this.mushMaker,
             score: this.score,
+            highscore: this.highScore,
             scoreBoard: this.scoreBoard,
             reset: this.reset,                                  
             render: this.render});
@@ -277,6 +282,15 @@ space: Phaser.Key;
         this.coin.play();
         this.score += 1;
         this.scoreText.text = ("" + this.score);
+        
+        // if (localStorage.getItem('highScore') === null){
+        //     localStorage.setItem('highscore', this.scoreText.text)
+        // }
+        // else if (this.score > this.highScore){
+        //     localStorage.setItem('highscore', this.scoreText.text)
+        // }
+
+        // this.highScoreText.text = ("HIGH SCORE: " + this.highScore);
     }
 
     reset() {
@@ -346,6 +360,9 @@ space: Phaser.Key;
 
 //create score
         this.scoreText = this.game.add.text(0,0,"0", {fontSize: '100px', fill: "#00FF00", font: "VT323" });
+
+//create high score
+        // this.highScoreText = this.game.add.text(700,0,"0", {fontSize: '50px', fill: "#00FF00", font: "VT323" });
 
 //emitter
         this.emitter = this.game.add.emitter(0,0,100);

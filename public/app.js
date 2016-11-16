@@ -4,6 +4,7 @@
 var DougTheSlug = (function () {
     function DougTheSlug() {
         this.score = 0;
+        // highScore = JSON.parse(localStorage.getItem('highscore'));
         this.nextTree = 3000;
         this.nextTree2 = 3000;
         this.nextSnowman = 5000;
@@ -43,6 +44,7 @@ var DougTheSlug = (function () {
             collisionHandler: this.collisionHandler,
             mushMaker: this.mushMaker,
             score: this.score,
+            highscore: this.highScore,
             scoreBoard: this.scoreBoard,
             reset: this.reset,
             render: this.render });
@@ -164,6 +166,13 @@ var DougTheSlug = (function () {
         this.coin.play();
         this.score += 1;
         this.scoreText.text = ("" + this.score);
+        // if (localStorage.getItem('highScore') === null){
+        //     localStorage.setItem('highscore', this.scoreText.text)
+        // }
+        // else if (this.score > this.highScore){
+        //     localStorage.setItem('highscore', this.scoreText.text)
+        // }
+        // this.highScoreText.text = ("HIGH SCORE: " + this.highScore);
     };
     DougTheSlug.prototype.reset = function () {
         this.game.state.start(this.game.state.current);
@@ -216,6 +225,8 @@ var DougTheSlug = (function () {
         this.roids.physicsBodyType = Phaser.Physics.ARCADE;
         //create score
         this.scoreText = this.game.add.text(0, 0, "0", { fontSize: '100px', fill: "#00FF00", font: "VT323" });
+        //create high score
+        // this.highScoreText = this.game.add.text(700,0,"0", {fontSize: '50px', fill: "#00FF00", font: "VT323" });
         //emitter
         this.emitter = this.game.add.emitter(0, 0, 100);
         this.emitter.makeParticles("gem");
