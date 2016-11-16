@@ -19,7 +19,7 @@ app.use(function(req, res, next) {
 
 app.get('/',(req,res)=>{
 	console.log("test");
-    res.sendFile(__dirname + "/public/index.html");
+    res.sendFile(__dirname + "/public/ninja.html");
 });
 
 
