@@ -102,7 +102,6 @@ var DougTheSlug = (function () {
         for (var i = 0; i < 4; i++) {
             this.snowman = this.snowmen.create(this.game.world.randomX, -75, "saltshaker");
             this.snowman.body.collideWorldBounds = false;
-            // this.snowman.body.gravity.y = 200; 
             this.snowman.body.immovable = false;
             this.snowman.lifespan = 3000;
         }
@@ -111,7 +110,6 @@ var DougTheSlug = (function () {
         for (var i = 0; i < 2; i++) {
             this.mushroom = this.mushrooms.create(this.game.world.randomX, -75, "mushroom");
             this.mushroom.body.collideWorldBounds = false;
-            // this.mushroom.body.gravity.y = 200; 
             this.mushroom.body.immovable = true;
             this.mushroom.lifespan = 3000;
         }
@@ -204,7 +202,7 @@ var DougTheSlug = (function () {
     DougTheSlug.prototype.scoreBoard = function (doug, mushroom) {
         this.mushrooms.remove(mushroom);
         //add to score
-        this.coin.play();
+        this.coin.play(null, null, 0.3, false, false);
         this.score += 1;
         this.scoreText.text = ("" + this.score);
         if (isNaN(this.highScore)) {

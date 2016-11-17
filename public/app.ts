@@ -216,7 +216,6 @@ enter: Phaser.Key;
 
                     this.snowman = this.snowmen.create(this.game.world.randomX, -75,"saltshaker");
                     this.snowman.body.collideWorldBounds = false;
-                    // this.snowman.body.gravity.y = 200; 
                     this.snowman.body.immovable = false;
                     this.snowman.lifespan = 3000;
             } 
@@ -227,7 +226,6 @@ enter: Phaser.Key;
         for (let i = 0; i < 2; i++) {
                     this.mushroom = this.mushrooms.create(this.game.world.randomX, -75,"mushroom");
                     this.mushroom.body.collideWorldBounds = false;
-                    // this.mushroom.body.gravity.y = 200; 
                     this.mushroom.body.immovable = true;
                     this.mushroom.lifespan = 3000;
  
@@ -240,7 +238,6 @@ enter: Phaser.Key;
                     this.specialMushroom.body.collideWorldBounds = false;
                     this.specialMushroom.body.immovable = true;
                     this.specialMushroom.lifespan = 5000;
-                    // this.specialMushroom.body.gravity.y = 200; 
         }
     }
 
@@ -337,7 +334,7 @@ enter: Phaser.Key;
     scoreBoard(doug, mushroom) {
         this.mushrooms.remove(mushroom);
         //add to score
-        this.coin.play();
+        this.coin.play(null, null, 0.3, false, false);
         this.score += 1;
         this.scoreText.text = ("" + this.score);
 
