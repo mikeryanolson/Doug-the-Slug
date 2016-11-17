@@ -126,7 +126,6 @@ space: Phaser.Key;
             scoreBoard: this.scoreBoard,
             reset: this.reset,                                  
             render: this.render});
-
             
   } 
 
@@ -242,6 +241,13 @@ space: Phaser.Key;
         this.doug.scale.x -= 0.1;
         this.scoreText.text = ("" + this.score);
 
+        if (this.score > this.highScore){
+            this.highScore = this.score;
+            localStorage.setItem('highscore', this.highScore.toString());
+        }
+
+        this.highScoreText.text = ("HIGH SCORE: " + this.highScore);
+
     }
 
     evilCollide (doug, evilMushroom){
@@ -249,7 +255,7 @@ space: Phaser.Key;
         this.evil.play();
         this.roid = this.roids.create(this.game.world.randomX, -500, "ast");
         this.roid.body.gravity.y = 200;
-        this.roid.scale.setTo(5,5);
+        this.roid.scale.setTo(4,4);
     }
 
     astCollide (doug, roid) {
@@ -466,11 +472,11 @@ space: Phaser.Key;
 
 
         if (this.cursors.right.isDown)
-            (this.doug.position.x += 17); 
+            (this.doug.position.x += 13); 
               
        
         if (this.cursors.left.isDown)
-            (this.doug.position.x -= 17);        
+            (this.doug.position.x -= 13);        
 
 
         if (this.space.isDown)
