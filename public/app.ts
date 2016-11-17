@@ -41,8 +41,6 @@ map: Phaser.Tilemap;
 
 doug: Phaser.Sprite;
 
-slime: Phaser.Sprite;
-
 trees: Phaser.Group;
 
 trees2: Phaser.Group;
@@ -76,8 +74,6 @@ snowField: Phaser.TileSprite;
 
 emitter: any;
 
-slimeEmitter: any;
-
 scoreText: Phaser.Text;
 
 highScoreText: Phaser.Text;
@@ -107,7 +103,6 @@ space: Phaser.Key;
             startText: this.startText,
             startText2: this.startText,
             endText: this.endText,
-            slimeTrail: this.slimeTrail,
             endText2: this.endText2,
             treefall:this.treefall, 
             treefall2:this.treefall2,             
@@ -144,7 +139,6 @@ space: Phaser.Key;
     preload() {
         this.game.load.script('webfont', 'https://fonts.googleapis.com/css?family=VT323');
         this.game.load.image("doug", "/images/doug.png");
-        this.game.load.image("slime", "/images/slime.png");        
         this.game.load.image("ast", "/images/a.png");      
         this.game.load.image("gem", "/images/greenGem.png");                       
         this.game.load.image("mushroom", "/images/mushroom.png");  
@@ -194,12 +188,6 @@ space: Phaser.Key;
                 this.righttree.scale.setTo(0.25, 0.25);
              
     }  
-
-    slimeTrail() {
-            this.slimeEmitter.x = this.doug.x + 40;
-            this.slimeEmitter.y = this.doug.y + 70;     
-            this.slimeEmitter.start(true, 400, null, 1); 
-    }
 
     snowMaker() {
         //CREATE SNOWMEN
@@ -337,7 +325,6 @@ space: Phaser.Key;
         this.doug.body.bounce.y = 0.2;
         this.doug.body.setSize(15, 25, 9, 8);
 
-
 //tree group
         this.trees = this.game.add.group();
         this.trees.enableBody = true;
@@ -384,10 +371,6 @@ space: Phaser.Key;
         this.emitter.makeParticles("gem");
         this.emitter.gravity = 50;
 
-//slimeEmitter
-    this.slimeEmitter = this.game.add.emitter(0, 0, 1)
-    this.slimeEmitter.makeParticles("slime");
-    this.slimeEmitter.gravity = 1500;
 
 //cursors
         this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -483,13 +466,11 @@ space: Phaser.Key;
 
 
         if (this.cursors.right.isDown)
-            (this.doug.position.x += 15); 
-            this.slimeTrail();      
+            (this.doug.position.x += 17); 
               
        
         if (this.cursors.left.isDown)
-            (this.doug.position.x -= 15);   
-            this.slimeTrail();      
+            (this.doug.position.x -= 17);        
 
 
         if (this.space.isDown)

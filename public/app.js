@@ -24,7 +24,6 @@ var DougTheSlug = (function () {
             startText: this.startText,
             startText2: this.startText,
             endText: this.endText,
-            slimeTrail: this.slimeTrail,
             endText2: this.endText2,
             treefall: this.treefall,
             treefall2: this.treefall2,
@@ -52,7 +51,6 @@ var DougTheSlug = (function () {
     DougTheSlug.prototype.preload = function () {
         this.game.load.script('webfont', 'https://fonts.googleapis.com/css?family=VT323');
         this.game.load.image("doug", "/images/doug.png");
-        this.game.load.image("slime", "/images/slime.png");
         this.game.load.image("ast", "/images/a.png");
         this.game.load.image("gem", "/images/greenGem.png");
         this.game.load.image("mushroom", "/images/mushroom.png");
@@ -90,11 +88,6 @@ var DougTheSlug = (function () {
         // lefttree.body.gravity.y = 350;    
         this.righttree.lifespan = 10000;
         this.righttree.scale.setTo(0.25, 0.25);
-    };
-    DougTheSlug.prototype.slimeTrail = function () {
-        this.slimeEmitter.x = this.doug.x + 40;
-        this.slimeEmitter.y = this.doug.y + 70;
-        this.slimeEmitter.start(true, 400, null, 1);
     };
     DougTheSlug.prototype.snowMaker = function () {
         //CREATE SNOWMEN
@@ -239,10 +232,6 @@ var DougTheSlug = (function () {
         this.emitter = this.game.add.emitter(0, 0, 100);
         this.emitter.makeParticles("gem");
         this.emitter.gravity = 50;
-        //slimeEmitter
-        this.slimeEmitter = this.game.add.emitter(0, 0, 1);
-        this.slimeEmitter.makeParticles("slime");
-        this.slimeEmitter.gravity = 1500;
         //cursors
         this.cursors = this.game.input.keyboard.createCursorKeys();
         this.A = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
@@ -309,11 +298,9 @@ var DougTheSlug = (function () {
         this.game.physics.arcade.overlap(this.doug, this.evilMushrooms, this.evilCollide, null, this);
         this.game.physics.arcade.overlap(this.doug, this.roids, this.astCollide, null, this);
         if (this.cursors.right.isDown)
-            (this.doug.position.x += 15);
-        this.slimeTrail();
+            (this.doug.position.x += 17);
         if (this.cursors.left.isDown)
-            (this.doug.position.x -= 15);
-        this.slimeTrail();
+            (this.doug.position.x -= 17);
         if (this.space.isDown)
             // (location.reload()); 
             this.reset();
