@@ -393,7 +393,7 @@ enter: Phaser.Key;
         this.bullets = this.game.add.group();
         this.bullets.enableBody = true;
         this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
-        this.slugCountText = this.game.add.text(890,50,"SLUGS: "+ (this.slugCount), {fontSize: '50px', fill: "#00FF00", font: "VT323" });
+        this.slugCountText = this.game.add.text(730, 50,"SLUGS: "+ (this.slugCount), {fontSize: '45px', fill: "#00FF00", font: "VT323" });
 
         
 
@@ -436,7 +436,7 @@ enter: Phaser.Key;
 
 //create high score
         this.highScore = parseInt(localStorage.getItem('highscore')) || 0;
-        this.highScoreText = this.game.add.text(750,0,"HIGH SCORE: "+ (this.highScore), {fontSize: '50px', fill: "#00FF00", font: "VT323" });
+        this.highScoreText = this.game.add.text(730,0,"HIGH SCORE: "+ (this.highScore), {fontSize: '45px', fill: "#00FF00", font: "VT323" });
 
 //emitter
         this.emitter = this.game.add.emitter(0,0,100);
