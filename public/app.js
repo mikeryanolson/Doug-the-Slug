@@ -70,6 +70,8 @@ var DougTheSlug = (function () {
         this.game.load.audio("gameover", "/sounds/gameover.ogg");
         this.game.load.audio("upgrade", "/sounds/upgrade.ogg");
         this.game.load.audio("evil", "/sounds/evil.ogg");
+        this.game.load.audio("explosion", "/sounds/explosion.ogg");
+        this.game.load.audio("laser", "/sounds/laser.ogg");
         this.game.load.audio("slugtheme", ["/sounds/slugtheme.mp3", "/sounds/slugtheme.ogg"]);
     };
     DougTheSlug.prototype.render = function () {
@@ -177,7 +179,8 @@ var DougTheSlug = (function () {
     DougTheSlug.prototype.bulletCollide = function (bullet, snowman) {
         this.bullets.remove(bullet);
         this.snowmen.remove(snowman);
-        this.emitter.x = snowman.x - 5;
+        this.explosion.play();
+        this.emitter.x = snowman.x + 5;
         ;
         this.emitter.y = snowman.y;
         this.emitter.start(true, 5000, null, 5);
@@ -186,6 +189,7 @@ var DougTheSlug = (function () {
         if (this.game.time.now > this.bulletTimer) {
             if (this.slugCount > 0) {
                 this.bullet = this.bullets.create(this.doug.x, this.doug.y, "doug");
+                this.laser.play();
                 this.bullet.lifespan = 3000;
                 this.bullet.reset(this.doug.x + 25, this.doug.y + 25);
                 this.bullet.body.velocity.y = -400;
@@ -226,6 +230,8 @@ var DougTheSlug = (function () {
         this.gameover = this.game.add.audio("gameover");
         this.upgrade = this.game.add.audio("upgrade");
         this.evil = this.game.add.audio("evil");
+        this.explosion = this.game.add.audio("explosion");
+        this.laser = this.game.add.audio("laser");
         //CREATE DOUG
         this.doug = this.game.add.sprite(this.game.width / 2, 0, "doug");
         this.doug.scale.setTo(2.5, 2.5);
