@@ -96,6 +96,13 @@ startText: Phaser.Text;
 
 startText2: Phaser.Text;
 
+startText3: Phaser.Text;
+
+startText4: Phaser.Text;
+
+startText5: Phaser.Text;
+
+
 endText: Phaser.Text;
 
 endText2: Phaser.Text;
@@ -120,7 +127,10 @@ enter: Phaser.Key;
             slugCount: this.slugCount,
             bulletTimer: this.bulletTimer,
             startText: this.startText,
-            startText2: this.startText,
+            startText2: this.startText2,
+            startText3: this.startText3,   
+            startText4: this.startText4,            
+            startText5: this.startText5,                                 
             endText: this.endText,
             endText2: this.endText2,
             treefall:this.treefall, 
@@ -185,7 +195,11 @@ enter: Phaser.Key;
 
     startScreen() {
              this.game.world.remove(this.startText); 
-             this.game.world.remove(this.startText2);                                    
+             this.game.world.remove(this.startText2);     
+             this.game.world.remove(this.startText3);        
+             this.game.world.remove(this.startText4);                                                                                
+             this.game.world.remove(this.startText5);                                                                                
+                                                                                     
     }
 
 
@@ -450,8 +464,11 @@ enter: Phaser.Key;
         
 
 //starttext
-        this.startText = this.game.add.text(0, this.game.height / 2 - 100, "DOUG THE SLUG", {fontSize: '120px', fill: "#00FF00", font: "VT323", align: "center" })            
-        this.startText2 = this.game.add.text(0, this.game.height / 1.8 , "go left / go right / shoot / eat mushrooms", {fontSize: '60px', fill: "#00FF00", font: "VT323", align: "center" })            
+        this.startText = this.game.add.text(0, this.game.height / 2 - 200, "DOUG THE SLUG", {fontSize: '160px', fill: "#00FF00", font: "VT323", align: "center" })            
+        this.startText2 = this.game.add.text(0, 300, "go left", {fontSize: '60px', fill: "#00FF66", font: "VT323", align: "center" })            
+        this.startText3 = this.game.add.text(0, 375 , "go right", {fontSize: '60px', fill: "#00FF66", font: "VT323", align: "center" })            
+        this.startText4 = this.game.add.text(0, 450 , "eat mushrooms", {fontSize: '60px', fill: "#00FF66", font: "VT323", align: "center" })            
+        this.startText5 = this.game.add.text(0, 525 , "shoot stuff", {fontSize: '60px', fill: "#00FF66", font: "VT323", align: "center" })            
 
 
         
