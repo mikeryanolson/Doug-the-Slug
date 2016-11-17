@@ -17,6 +17,16 @@ upgrade : Phaser.Sound;
 
 evil: Phaser.Sound;
 
+bullets: Phaser.Group;
+
+bullet: Phaser.Sprite;
+
+slugCount: number = 0;
+
+bulletTimer: number = 0;
+
+slugCountText: Phaser.Text;
+
 snowmen: Phaser.Group;
 
 snowman: Phaser.Sprite;
@@ -91,6 +101,7 @@ A: Phaser.Key;
 S: Phaser.Key;
 D: Phaser.Key;
 space: Phaser.Key;
+enter: Phaser.Key;
   
 
     constructor() {
@@ -100,6 +111,10 @@ space: Phaser.Key;
             create: this.create, 
             update:this.update, 
             startScreen: this.startScreen,
+            fireBullet: this.fireBullet,
+            bulletCollide: this.bulletCollide,
+            slugCount: this.slugCount,
+            bulletTimer: this.bulletTimer,
             startText: this.startText,
             startText2: this.startText,
             endText: this.endText,
@@ -240,6 +255,7 @@ space: Phaser.Key;
         this.doug.scale.y += 0.4;
         this.doug.scale.x -= 0.1;
         this.scoreText.text = ("" + this.score);
+        this.slugCount += 1;
 
         if (this.score > this.highScore){
             this.highScore = this.score;
@@ -247,6 +263,8 @@ space: Phaser.Key;
         }
 
         this.highScoreText.text = ("HIGH SCORE: " + this.highScore);
+        this.slugCountText.text = ("SLUGS: " + this.slugCount);
+
 
     }
 
@@ -266,8 +284,9 @@ space: Phaser.Key;
         this.gameover.play();
         this.snowmen.remove(roid);
         this.endText = this.game.add.text(0, this.game.height / 2 - 150, "DOUG DIED", {fontSize: '240px', fill: "#00FF00", font: "VT323", align: "center" })            
-        this.endText2 = this.game.add.text(0, this.game.height - 100 , "spacebar to live again", {fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" }) 
-    }
+        this.endText2 = this.game.add.text(0, this.game.height - 100 , "hit enter to live again", {fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" }) 
+        this.slugCount = 0;
+}
 
     collisionHandler(doug, snowman) {
         this.emitter.x = this.doug.x+50;
@@ -277,7 +296,34 @@ space: Phaser.Key;
         this.gameover.play();
         this.snowmen.remove(snowman);
         this.endText = this.game.add.text(0, this.game.height / 2 - 150, "DOUG DIED", {fontSize: '240px', fill: "#00FF00", font: "VT323", align: "center" })            
-        this.endText2 = this.game.add.text(0, this.game.height - 100 , "spacebar to live again", {fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" })            
+        this.endText2 = this.game.add.text(0, this.game.height - 100 , "hit enter to live again", {fontSize: '80px', fill: "#00FF00", font: "VT323", align: "center" })            
+        this.slugCount = 0;
+}
+
+    bulletCollide(bullet, snowman) {
+        this.bullets.remove(bullet);
+        this.snowmen.remove(snowman);
+        this.emitter.x = snowman.x - 5;;
+        this.emitter.y = snowman.y;     
+        this.emitter.start(true, 5000, null, 5); 
+    }
+
+    fireBullet() {
+        
+        if (this.game.time.now > this.bulletTimer){
+            if (this.slugCount > 0){
+                    this.bullet = this.bullets.create(this.doug.x, this.doug.y, "doug");
+                    this.bullet.lifespan = 3000;
+                    this.bullet.reset(this.doug.x+25, this.doug.y+25);
+                    this.bullet.body.velocity.y = -400;
+                    this.bullet.body.collideWorldBounds = false;
+                    this.bullet.body.immovable = true
+                    this.slugCount -= 1;
+                    this.slugCountText.text = ("SLUGS: " + this.slugCount);
+                    this.bulletTimer = this.game.time.now + 500;
+
+                }
+        }
     }
 
     scoreBoard(doug, mushroom) {
@@ -304,6 +350,7 @@ space: Phaser.Key;
             this.game.state.start(this.game.state.current);
             this.music.restart("slugtheme", 1, 1, true);
             this.score = 0;
+            this.slugCount = 0;
     }
 
 
@@ -330,6 +377,14 @@ space: Phaser.Key;
         this.doug.body.gravity.y = 4000; 
         this.doug.body.bounce.y = 0.2;
         this.doug.body.setSize(15, 25, 9, 8);
+
+//bullets group
+        this.bullets = this.game.add.group();
+        this.bullets.enableBody = true;
+        this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
+        this.slugCountText = this.game.add.text(890,50,"SLUGS: "+ (this.slugCount), {fontSize: '50px', fill: "#00FF00", font: "VT323" });
+
+        
 
 //tree group
         this.trees = this.game.add.group();
@@ -383,11 +438,12 @@ space: Phaser.Key;
         this.A = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
         this.S = this.game.input.keyboard.addKey(Phaser.Keyboard.S);
         this.space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.enter = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
         
 
 //starttext
         this.startText = this.game.add.text(0, this.game.height / 2 - 100, "DOUG THE SLUG", {fontSize: '120px', fill: "#00FF00", font: "VT323", align: "center" })            
-        this.startText2 = this.game.add.text(0, this.game.height / 2 , "go left / go right / eat mushrooms", {fontSize: '60px', fill: "#00FF00", font: "VT323", align: "center" })            
+        this.startText2 = this.game.add.text(0, this.game.height / 1.8 , "go left / go right / shoot / eat mushrooms", {fontSize: '60px', fill: "#00FF00", font: "VT323", align: "center" })            
 
 
         
@@ -433,6 +489,7 @@ space: Phaser.Key;
             this.evilTimer = this.game.time.now + 2000;
         }
 
+
 //move items Y axis
             this.mushrooms.forEach((mushroom) => {
                 mushroom.y += 5;
@@ -469,6 +526,9 @@ space: Phaser.Key;
 
         this.game.physics.arcade.overlap(this.doug, this.roids, this.astCollide, null, this); 
 
+        this.game.physics.arcade.overlap(this.bullets, this.snowmen, this.bulletCollide, null, this); 
+
+
 
 
         if (this.cursors.right.isDown)
@@ -476,10 +536,14 @@ space: Phaser.Key;
               
        
         if (this.cursors.left.isDown)
-            (this.doug.position.x -= 13);        
+            (this.doug.position.x -= 13);      
 
+        if (this.space.isDown){
+            this.fireBullet();
 
-        if (this.space.isDown)
+        }
+
+        if (this.enter.isDown)
             // (location.reload()); 
             this.reset();
         
